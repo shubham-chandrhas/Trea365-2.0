@@ -1,0 +1,1101 @@
+<div class="woListSection">
+  <h1 class="pageHeader">Work Orders</h1>
+  <p class="page-summary">
+    Detailed work requirements and scheduling for all jobs.
+  </p>
+  <div class="trea-welcome" *ngIf="WorkOrderList.length == 0 && onBoarding">
+    <h4>There are no Work Orders yet.</h4>
+    <p class="textJustified">
+      Work Orders can be created from Project Estimates (for Client work) or can specify work to be done within the
+      company. Work orders can be assigned to the company’s own staff, or to outside Contractors as necessary. Schedule
+      the work, reserve the required Assets, and get your team to work.
+    </p>
+    <p class="textJustified">
+      Work Orders will be listed here when an authorized user has created one.
+    </p>
+    <p class="textJustified">
+      Employees or Subcontractors must exist before a WO can be made.
+    </p>
+    <!-- *ngIf="util.getRole() == 2" -->
+    <div class="button-row clearfix" *ngIf="util.canAccess('wo_create')">
+      <div class="dropdown">
+        <button mat-raised-button class="client-btn dropdown-toggle" type="button" data-toggle="dropdown"
+          style="padding: 0px">
+          New Work Order
+        </button>
+        <ul class="dropdown-menu wo-no-list">
+          <li>
+            <a href="javascript:void(0)" class="client-btn text-center"
+              routerLink="/workflow/wo/csa/work-order/services">Internal</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" class="client-btn text-center" (click)="showQuotationListPopup()">Client</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="clearfix" *ngIf="!util.canAccess('wo_create')">
+        <p class="note">Please contact an administrator who can add Work Order</p>
+    </div>          
+  </div>
+  <div class="head-row clearfix" *ngIf="WorkOrderList.length != 0" canAccess="wo_list">
+    <div class="search-section">
+      <div class="input-group">
+        <span class="search-icn" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+        <!-- [(ngModel)]="searchList" (ngModelChange)="getSearchTxt(searchList)" (keyup)="searchTxt = util.searchInList($event, searchList)" -->
+        <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+          aria-describedby="basic-addon1" [(ngModel)]="searchList" (keydown.enter)="searchTxt = searchList"
+          (ngModelChange)="getSearchTxt(searchList)" />
+        <!-- (click)="searchTxt = searchList" -->
+        <button type="button" mat-raised-button class="client-btn" (click)="searchTxt = searchList">
+          Search
+        </button>
+      </div>
+    </div>
+    <div class="add-client addEmpBtnWrap">
+      <div class="dropdown">
+        <button type="button" mat-raised-button
+          class="client-btn dropdown-toggle" canAccess="wo_create" type="button" data-toggle="dropdown" style="padding: 0px">
+          New Work Order
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="javascript:void(0)" class="client-btn text-center"
+              routerLink="/workflow/wo/csa/work-order/services">Internal</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" class="client-btn text-center" (click)="showQuotationListPopup()">Client</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="trea-data-table table-responsive" *ngIf="WorkOrderList.length != 0" canAccess="wo_list">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="300">
+            <div class="table-hdr">
+              <div>
+                <span>Date</span>
+                <span (click)="
+                    columnType = 'N';
+                    sortColumn = 'work_order_date';
+                    sortOrder =
+                      sortColumn === 'work_order_date'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'work_order_date' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="dateSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="table-hdr bdr-left ">
+              <div>
+                <span>W/O No.</span>
+                <span (click)="
+                    columnType = 'N';
+                    sortColumn = 'work_order_no';
+                    sortOrder =
+                      sortColumn === 'work_order_no'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'work_order_no' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="woNoSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>W/O Type</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'wo_type';
+                    sortOrder =
+                      sortColumn === 'wo_type'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'wo_type' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="woTypeSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Assigned To</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'assignedTo';
+                    sortOrder =
+                      sortColumn === 'assignedTo'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'assignedTo' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="assignToSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Client</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'company_name';
+                    sortOrder =
+                      sortColumn === 'company_name'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'company_name' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="clientSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Quote No.</span>
+                <span (click)="
+                    columnType = 'N';
+                    sortColumn = 'project_estimate_no';
+                    sortOrder =
+                      sortColumn === 'project_estimate_no'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'project_estimate_no' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="quoteNoSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Status</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'status';
+                    sortOrder =
+                      sortColumn === 'status'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'status' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                  aria-describedby="basic-addon1" [(ngModel)]="statusSearch" />
+              </div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="
+            let indx = index;
+            let wo;
+            of: WorkOrderList
+              | sortBy: sortColumn:sortOrder:columnType
+              | searchfilter: statusSearch:'status'
+              | searchfilter: woTypeSearch:'wo_type'
+              | searchfilter: assignToSearch:'assign_to'
+              | searchfilter: dateSearch:'work_order_date'
+              | searchfilter: clientSearch:'client'
+              | searchfilter: woNoSearch:'work_order_no'
+              | searchfilter: quoteNoSearch:'project_estimate_no'
+              | searchfilter
+                : searchTxt
+                : 'status,wo_type,assign_to,work_order_date,client,work_order_no,project_estimate_no'
+              | listLengthfilter
+              | paginate: paginationKey
+          " (click)="getSelectedWorkOrder(wo.work_order_id, indx)"
+          [ngClass]="selectedIndex == indx ? 'sel-row-highlight' : ''">
+          <td>{{ wo.work_order_date ? wo.work_order_date : constant.NA  }}</td>
+          <td>{{ wo.work_order_no ? wo.work_order_no : constant.NA }}</td>
+          <td>{{ wo.wo_type ? wo.wo_type : constant.NA }}</td>
+          <td>{{ wo.assign_to ? wo.assign_to : constant.NA }}</td>
+          <td>{{ wo.client ? wo.client : constant.NA }}</td>
+          <td>
+            {{ wo.project_estimate_no ? wo.project_estimate_no : constant.NA }}
+          </td>
+          <td>
+            {{ wo.status ? wo.status : constant.NA
+            }}<span class="dn">{{
+              indx == 0 ? updateCount(wo.count) : ""
+            }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="treaPagination" *ngIf="WorkOrderList.length != 0 && constant.ITEM_COUNT != 0" canAccess="wo_list">
+    <div class="pull-right">
+      <span>
+        {{ 1 + (paginationKey.currentPage - 1) * paginationKey.itemsPerPage }} -
+        {{
+          paginationKey.itemsPerPage <= listCount &&
+          paginationKey.itemsPerPage +
+            (paginationKey.currentPage - 1) * paginationKey.itemsPerPage <=
+            listCount
+            ? paginationKey.itemsPerPage +
+              (paginationKey.currentPage - 1) * paginationKey.itemsPerPage
+            : listCount
+        }}</span><span> of {{ listCount }} items</span>
+    </div>
+    <div class="pull-right">
+      <select [(ngModel)]="paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+        <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo">
+          {{ pageNo }}
+        </option>
+      </select>
+      <span> items per page</span>
+    </div>
+    <div class="pull-right">
+      <pagination-controls (pageChange)="changePage($event)" directionLinks="true" autoHide="false" previousLabel="Pre"
+        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+        screenReaderCurrentLabel="You're on page">
+      </pagination-controls>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div id="woMark" class="container-fluid" *ngIf="selectedWorkOrder" canAccess="wo_details">
+    <div class="selSection">
+      <div class="clearfix"></div>
+      <div class="quotationDetails">
+        <div class="selPart">
+          <span>Work Order {{ selectedWorkOrder.work_order_no }} ({{
+              selectedWorkOrder.status
+                ? selectedWorkOrder.status
+                : constant.N_A
+            }})</span>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Date</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{ selectedWorkOrder.work_order_date ? util.getFormatedDate(selectedWorkOrder.work_order_date) : constant.N_A }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Generated by</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.generated_by
+                      ? selectedWorkOrder.generated_by
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="selectedWorkOrder.quote_number">
+              <div class="col-sm-6">
+                <div class="label-col">Quotation</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.quote_number
+                      ? selectedWorkOrder.quote_number.project_estimate_no
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Assigned to</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.assign_to
+                        ? selectedWorkOrder.assign_to
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+              <div class="col-sm-6">
+                <div class="label-col">Supplier Name</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.supplier_name
+                        ? selectedWorkOrder.supplier_name
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+              <div class="col-sm-6">
+                <div class="label-col">Phone</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.supplier_phone
+                        ? selectedWorkOrder.supplier_phone
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedWorkOrder && selectedWorkOrder.approve_note">
+              <div class="col-sm-6">
+                <div class="label-col">Note</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.approve_note
+                        ? selectedWorkOrder.approve_note
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Client</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.client_name ?  selectedWorkOrder.client_name:constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Work Location</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col" *ngIf="selectedWorkOrder.client_work_location">
+                  {{
+                      selectedWorkOrder.client_work_location
+                        ? selectedWorkOrder.client_work_location
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+              <div class="col-sm-6">
+                <div class="label-col">Email</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.supplier_email
+                        ? selectedWorkOrder.supplier_email
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+              <div class="col-sm-6">
+                <div class="label-col">Address</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                      selectedWorkOrder.supplier_address
+                        ? selectedWorkOrder.supplier_address
+                        : constant.N_A
+                    }}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="repairAssetInfo MB25" *ngIf="
+          selectedWorkOrder.is_repairing_asset === 1">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="label-col MB20">
+              <div class="text-center">Repair Asset Information</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Manufacturer</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.maintenance_request.manf_name
+                      ? selectedWorkOrder.maintenance_request.manf_name
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Item Definition</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.maintenance_request.item_definition_name
+                      ? selectedWorkOrder.maintenance_request.item_definition_name
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Name</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.maintenance_request.short_tag
+                      ? selectedWorkOrder.maintenance_request.short_tag
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Serial No.</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedWorkOrder.maintenance_request.serial_no
+                      ? selectedWorkOrder.maintenance_request.serial_no
+                      : constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Details</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col" *ngIf="selectedWorkOrder.maintenance_request">
+                  {{
+                    selectedWorkOrder.maintenance_request.maintenance_details
+                      ? selectedWorkOrder.maintenance_request.maintenance_details
+                      :  constant.N_A
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="clearfix"></div>
+      <div class="reqDescWrap" *ngIf="selectedWorkOrder.requirements">
+        <h3 class="detailsHeading">Requirements</h3>
+        <div class="description">
+          {{selectedWorkOrder.requirements}}
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+      <div class="servicesDetails">
+        <div class="serPart">
+          <span>Services</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Service Type</th>
+                <th class="text-right" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+                  Cost
+                </th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right"
+                  *ngIf="selectedWorkOrder.assign_to && selectedWorkOrder.assign_to == 'Contractor'">
+                  Amount
+                </th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="selectedWorkOrder.services">
+              <tr *ngFor="let service of selectedWorkOrder.services">
+                <td>
+                  <span>{{ service.service_definition
+                      ? service.service_definition
+                      : constant.N_A }}</span>
+
+                </td>
+                <td class="text-right" *ngIf="selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'">
+                  {{
+                    service.cost | currency: util.getCurrency():"symbol-narrow"
+                  }}
+                </td>
+                <td class="text-right">
+                  {{ service.quantity }}
+                </td>
+                <td class="text-right" *ngIf="selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'">
+                  {{
+                    service.total_amount
+                      | currency: util.getCurrency():"symbol-narrow"
+                  }}
+                </td>
+                <td>
+                  {{ service.details ? service.details : "N/A" }}
+                </td>
+              </tr>
+
+            </tbody>
+            <tfoot *ngIf="
+              selectedWorkOrder.assign_to &&
+              selectedWorkOrder.assign_to == 'Contractor'
+            ">
+              <tr>
+                <td colspan=3 class="text-right">
+                  Total Service Cost:
+                </td>
+                <td class="text-right">
+                  <span>
+                    {{
+              selectedWorkOrder.cost_of_services ? (selectedWorkOrder.cost_of_services
+                | currency: util.getCurrency():"symbol-narrow") : constant.N_A
+            }}</span>
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+                <td class="text-right">
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+              </tr>
+            </tfoot>
+          </table>
+
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="clearfix"></div>
+      <!-- servicesDetails -->
+      <div class="paymentsDetails" *ngIf="selectedWorkOrder.assets.length > 0">
+        <div class="serPart">
+          <span>Assets</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Start Date</th>
+                <th>Start Time</th>
+                <th>End Date</th>
+                <th>End Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let asset of selectedWorkOrder.assets">
+                <td>
+                  {{
+                    asset.asset_name ? asset.asset_name : constant.N_A
+                  }}
+                </td>
+                <td>{{ asset.start_date ? util.getFormatedDate(asset.start_date) : constant.N_A }}</td>
+                <td>{{ asset.start_time }} {{ asset.start_time_format }}</td>
+                <td>{{ asset.end_date ? util.getFormatedDate(asset.end_date) : constant.N_A }}</td>
+                <td>{{ asset.end_time }} {{ asset.end_time_format }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="clearfix"></div>
+      <div class="servicesDetails" *ngIf="selectedWorkOrder.product_materials.length > 0">
+        <div class="serPart">
+          <span>Product/Materials</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product/Material</th>
+                <th class="text-right" *ngIf="
+                    selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'
+                  ">
+                  Cost
+                </th>
+                <th class="text-right">Quantity</th>
+                <th class="text-right" *ngIf="
+                    selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'
+                  ">
+                  Amount
+                </th>
+                <th>Location</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pro_mat of selectedWorkOrder.product_materials">
+                <td>
+                  {{ pro_mat.item_definition_name ? pro_mat.item_definition_name : constant.N_A }}
+                </td>
+                <td class="text-right" *ngIf="
+
+                    selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'
+                  ">
+                  {{
+                    pro_mat.cost ? (pro_mat.cost | currency: util.getCurrency():"symbol-narrow") : constant.N_A
+                  }}
+                </td>
+                <td class="text-right">
+                  {{ pro_mat.quantity }}
+                  <span class="">&nbsp; {{pro_mat ? pro_mat.uom : ''}}</span>
+                </td>
+                <td *ngIf="
+
+                    selectedWorkOrder.assign_to &&
+                    selectedWorkOrder.assign_to == 'Contractor'
+                  ">
+                  {{
+                    pro_mat.total_amount ? (pro_mat.total_amount | currency: util.getCurrency():"symbol-narrow") : constant.N_A
+                  }}
+                </td>
+                <td>
+                  <div class="info-col">
+                    <li *ngFor="
+                        let locInd = index;
+                        let loc;
+                        of: pro_mat.locations
+                      ">
+                      <div style="margin: -25px 0px 10px 0px;">
+                        <div>
+                          <span class="locNum">&nbsp;&nbsp;</span>&nbsp;{{
+                            loc.location_name ? loc.location_name : ""
+                          }}
+                        </div>
+                        <div>
+                          <span class="locNum">&nbsp;&nbsp;</span>&nbsp;{{
+                            loc.location_tag_name
+                              ? loc.location_tag_name
+                              : ""
+                          }}
+                        </div>
+                        <div>
+                          <span class="locNum">&nbsp;&nbsp;</span>&nbsp;Pick up
+                          quantity - {{ loc.quantity ? loc.quantity : constant.N_A  }}
+                        </div>
+                      </div>
+                    </li>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+            <tfoot *ngIf="
+              selectedWorkOrder.assign_to &&
+              selectedWorkOrder.assign_to == 'Contractor'
+            ">
+              <tr>
+                <td colspan=3 class="text-right">
+                  Total Product/Material Cost:
+                </td>
+                <td class="text-right">
+                  <span>
+                    {{
+              selectedWorkOrder.cost_of_product_material ? (selectedWorkOrder.cost_of_product_material
+                | currency: util.getCurrency():"symbol-narrow") : constant.N_A
+            }}</span>
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+                <td class="text-right">
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="scheduleDetails">
+        <div class="serPart">
+          <span>Schedule</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Start Date</th>
+                <th>Start Time</th>
+                <th>End Date</th>
+                <th>End Time</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="selectedWorkOrder.schedule">
+              <tr>
+                <td>
+                  {{
+                    selectedWorkOrder.schedule.start_date ? util.getFormatedDate(
+                      selectedWorkOrder.schedule.start_date) : constant.N_A
+
+                  }}
+                </td>
+                <td>
+                  {{ selectedWorkOrder.schedule.start_time ? selectedWorkOrder.schedule.start_time.substring(0, 5) : constant.N_A }}
+                  {{ selectedWorkOrder.schedule.start_time ? selectedWorkOrder.schedule.start_time_format : ""}}
+                </td>
+                <td>
+                  {{
+                    selectedWorkOrder.schedule.end_date ? util.getFormatedDate(selectedWorkOrder.schedule.end_date) : constant.N_A
+                  }}
+                </td>
+                <td>
+                  {{ selectedWorkOrder.schedule.end_time ? selectedWorkOrder.schedule.end_time.substring(0, 5) : constant.N_A }}
+                  {{ selectedWorkOrder.schedule.end_time ? selectedWorkOrder.schedule.end_time_format : "" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="row">
+        <div class="col-sm-12" *ngIf="selectedWorkOrder.assign_to == 'Staff'">
+          <div class="paymentsDetails">
+            <div class="serPart">
+              <span>Team</span>
+            </div>
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Members</th>
+                    <th>Start Date</th>
+                    <th>Start Time</th>
+                    <th>End Date</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="selectedWorkOrder.team">
+                  <tr *ngFor="let team of selectedWorkOrder.team">
+                    <td>
+                      {{ team.name }}
+                      <span *ngIf="team.is_team_leader == 1">(TL)</span>
+                    </td>
+                    <td>{{ team.start_date ? util.getFormatedDate(team.start_date) : constant.N_A }}</td>
+                    <td>
+                      {{ team.start_time ? team.start_time.substring(0, 5) : constant.N_A }}
+                      {{ team.start_time ? team.start_time_format : "" }}
+                    </td>
+                    <td>{{ team.end_date ? util.getFormatedDate(team.end_date) : constant.N_A }}</td>
+                    <td>
+                      {{ team.end_time ? team.end_time.substring(0, 5) : constant.N_A }}
+                      {{ team.end_time ? team.end_time_format : ""}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-6" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+          <div class="paymentsDetails">
+            <div class="serPart">
+              <span>Payment Terms</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th class="text-right">Amount Due</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="selectedWorkOrder.payment_schedule">
+                  <tr *ngFor="let payment of selectedWorkOrder.payment_schedule">
+                    <td>{{ payment.date ? util.getFormatedDate(payment.date) : constant.N_A }}</td>
+                    <td class="text-right">
+                      {{
+                        payment.date ? (payment.amount
+                          | currency: util.getCurrency():"symbol-narrow") : constant.N_A
+                      }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 text-right" *ngIf="selectedWorkOrder.assign_to == 'Contractor'">
+          <div class="costCalculate">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="info-col">Cost of Services </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="info-col">
+                      {{selectedWorkOrder.cost_of_services | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="label-col">
+                      <b>Subtotal</b>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="label-col">
+                      <b>{{selectedWorkOrder.subtotal | currency: util.getCurrency() :'symbol-narrow'}}</b>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="info-col">Shipping and Handling</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="info-col">
+                      {{selectedWorkOrder.shipping_and_handling | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="info-col">Adjustment</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="info-col">
+                      {{selectedWorkOrder.adjustment | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="info-col">Tax @ <span> {{selectedWorkOrder.taxes}} %</span></div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="info-col">
+                      {{selectedWorkOrder.tax_amount | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="label-col">
+                      <b>Total Cost</b>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="label-col">
+                      <b>{{selectedWorkOrder.total_cost | currency: util.getCurrency() :'symbol-narrow'}}</b>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="clearfix"></div>
+      <div class="row">
+        <div class="col-sm-12"
+          *ngIf="selectedWorkOrder.unavailable_resources && selectedWorkOrder.unavailable_resources.length > 0">
+          <div class="unavailableResource">
+            <div class="serPart">
+              <span>Unavailable Resources</span>
+            </div>
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Start Date</th>
+                    <th>Start Time</th>
+                    <th>End Date</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="selectedWorkOrder.unavailable_resources">
+                  <tr *ngFor="
+                      let resource of selectedWorkOrder.unavailable_resources
+                    ">
+                    <td>{{ resource.resource_name }}</td>
+                    <td>{{ resource.resource_type }}</td>
+                    <td>{{ util.getFormatedDate(resource.start_date) }}</td>
+                    <td>
+                      {{ resource.start_time.substring(0, 5) }}
+                      {{ resource.start_time_format }}
+                    </td>
+                    <td>{{ util.getFormatedDate(resource.end_date) }}</td>
+                    <td>
+                      {{ resource.end_time.substring(0, 5) }}
+                      {{ resource.end_time_format }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="clearfix"></div>
+      <div class="button-row clearfix">
+        <button type="button" class="trea-btn" mat-raised-button (click)="preview(selectedWorkOrder.preview)">
+          Preview
+        </button>
+        <button type="button" class="trea-btn" mat-raised-button (click)="downloadPDF(selectedWorkOrder.pdfLink)">
+          Download as PDF
+        </button>
+      </div>
+      <div class="button-row" *ngIf="selectedWorkOrder.status_id != 6">
+        <button *ngIf="
+            selectedWorkOrder.status_id != 4
+          "
+          canAccess="wo_create"
+           mat-raised-button class="trea-btn" type="button" (click)="editWO(selectedWorkOrder)">
+          Edit
+        </button>
+
+
+        <button *ngIf="
+            selectedWorkOrder.status_id != 5 &&
+            selectedWorkOrder.status_id != 4 &&
+            selectedWorkOrder.status_id != 6
+          " mat-raised-button class="trea-btn" canAccess="wo_create" type="button" (click)="startWO(selectedWorkOrder)">
+          Start Work Order
+        </button>
+
+        <button *ngIf="
+            selectedWorkOrder.status_id == 5 &&
+            selectedWorkOrder.status_id != 4
+          " mat-raised-button class="trea-btn" canAccess="wo_create" type="button" (click)="completeWO(selectedWorkOrder)">
+          Complete Work Order
+        </button>
+
+        <button *ngIf="
+            selectedWorkOrder.status_id == 1" mat-raised-button class="trea-btn" type="button" canAccess="wo_create"
+          (click)="cancelWO(selectedWorkOrder)">
+          Cancel Work Order
+        </button>
+        <button *ngIf="
+            selectedWorkOrder.status_id == 1" canAccess="wo_create" mat-raised-button class="trea-btn" type="button"
+          (click)="deleteWO(selectedWorkOrder)">
+          Delete Work Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<!-- Filter Form -->
+<div class="head-row">
+
+  <form [formGroup]="scheduleFilterForm">
+
+    <div class="date-filters pull-right margin-tp-1">
+
+      <div class="dateWrapper">
+        <input type="text" id="start-date" class="date" formControlName="startDate" matInput [matDatepicker]="start"
+          (dateInput)="startDateChange($event)" (dateChange)="startDateChange($event)">
+        <mat-datepicker #start (selectedChanged)="startDateChange($event)"></mat-datepicker>
+        <span class="dateIcon" (click)="start.open()"><img src="assets/icon/date_picker.png"></span>
+      </div>
+
+      <label for="end-date">to</label>
+
+      <div class="dateWrapper">
+        <input type="text" [min]="event_start_date" id="end-date" matInput class="date" formControlName="endDate"
+          [matDatepicker]="end" (dateInput)="endDateChange($event)" (dateChange)="endDateChange($event)">
+        <mat-datepicker #end (selectedChanged)="endDateChange($event)"></mat-datepicker>
+        <span class="dateIcon" (click)="end.open()"><img src="assets/icon/date_picker.png"></span>
+      </div>
+
+    </div>
+
+  </form>
+
+</div>
+<!-- / Filter Form -->
+
+<div class="row">
+
+  <!-- Calendar -->
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+    <div class="ngsc-table-scroll">
+
+      <div class="ngsc-table-wrapper-outer">
+
+        <div class="ngsc-table-wrapper" id="timelineContainer">
+
+          <table class="ngsc-table">
+
+            <thead class="ngsc-head">
+              <tr>
+                <th *ngFor="let date of getHeaderDates()" class="ngsc-date-cell"
+                  [style.width]="setDayWidth(displayDays)">
+                  <div class="ngsc-date" [style.width]="setDayWidth(displayDays)">
+                    {{date}}
+                  </div>
+                </th>
+              </tr>
+              <tr>
+                <td *ngFor="let date of getHeaderDates()" class="time-row">
+                  <span>12am</span>
+                  <span [style.visibility]="getHourVisibility()">6am</span>
+                  <span>12pm</span>
+                  <span [style.visibility]="getHourVisibility()">6pm</span>
+                </td>
+              </tr>
+            </thead>
+
+            <tbody>
+              <!-- A row for each resource -->
+              <tr *ngFor="let event of schedules; let ei = index;">
+                <td [attr.colspan]="getHeaderDates().length" class="ngsc-resource-events  timeline-td">
+
+                  <!-- A list of events for this resource -->
+                  <ul class="ngsc-events-list">
+
+                    <li class="ngsc-event event-type-{{event.type | lowercase }} event-{{ei}}"
+                      [style.width]="setEventWidth(event)" [style.left]="setEventPos(event)">
+
+                      <div [style.marginLeft.%]="alignEventText(event, i, ei)">
+                        {{ event.name }}<br>
+                        <small>{{ event.start  | date : "MM/dd/yyyy hh:mm a" }} -
+                          {{ event.end | date : "MM/dd/yyyy hh:mm a" }}</small>
+                      </div>
+                    </li>
+
+                    <li *ngIf="schedules.length == 0" class="ngsc-noevents">
+                      &nbsp;<br />&nbsp;
+                    </li>
+
+                  </ul>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <!-- /Calendar -->
+
+</div>

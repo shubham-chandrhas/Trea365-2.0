@@ -1,0 +1,295 @@
+<div class="businessNature">
+  <h1 class="pageTitle">Services</h1>
+  <p class="page-summary">The company's complete service catalog, defined in three tiers.</p>
+
+  <div class="trea-welcome" *ngIf="businessNatureList.length == 0 && onBoarding ">
+    <h4>There is no information yet for Services.</h4>
+    <p class="textJustified">
+      Services details your company’s complete service catalog. Define all activities carried out by your workers, and
+      specify a default price for each (don’t worry, you can override these as necessary on each project estimate).
+      Services are grouped into general categories called Service Types, and these fall under the main areas of your
+      business, the Business Types.
+    </p>
+    <p class="textJustified" *ngIf="!util.canAccess('service_definition_create')">
+      Business Types will be listed here when an authorized user has created one.
+    </p>
+    <!-- *ngIf="util.getRole() == 2" -->
+    <div class="button-row clearfix" canAccess="service_definition_create">
+      <p class="remarks">Start defining your service catalog:
+      </p>
+      <button mat-raised-button class="trea-btn" type="button" routerLink="/csa/add-service"
+        (click)="newBusinessType()">
+        Create a Service
+      </button>
+      <button mat-raised-button class="trea-btn" type="button" (click)="addFromCSV()">
+        Upload Bulk Data
+      </button>
+    </div>
+    <!-- *ngIf="util.getRole() != 2" -->
+    <!-- <div class="clearfix" canAccess="service_definition_list">
+            <p class="note">Please contact an administrator who can add Service</p>
+    </div> -->
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div class="head-row clearfix" *ngIf="businessNatureList.length != 0">
+    <div class="search-section">
+      <div class="input-group">
+        <span class="search-icn" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+        <input autocomplete="nope" [(ngModel)]="searchList" (ngModelChange)="getSearchTxt(searchList)" type="text"
+          class="form-control" placeholder="" aria-label="" (keydown.enter)="searchTxt = searchList"
+          aria-describedby="basic-addon1">
+        <button type="button" (click)="searchTxt = searchList" mat-raised-button class="client-btn">Search</button>
+      </div>
+    </div>
+    <!-- *ngIf="util.getRole() == 2" -->
+    <div class="add-business addTreaBtnWrap" canAccess="service_definition_create">
+      <div class="dropdown">
+        <button mat-raised-button class="client-btn dropdown-toggle" type="button" data-toggle="dropdown">New Service
+          Type
+        </button>
+
+        <ul class="dropdown-menu">
+          <li><a href="javascript:void(0)" mat-raised-button class="client-btn" routerLink="/csa/add-service"
+              (click)="newBusinessType()">Manual Input</a></li>
+          <li><a href="javascript:void(0)" mat-raised-button class="client-btn" (click)="addFromCSV()">Bulk Upload</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+
+  <div>
+    <div class="trea-data-table table-responsive" *ngIf="businessNatureList.length != 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th width="300">
+              <div class="table-hdr">
+                <div>
+                  <span>Service Type</span>
+                  <span (click)="sortColumnType='A';sortListType('service_type');">
+                    <i [ngClass]=" sortColumn == 'service_type' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                      class="fa fa-signal" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <div>
+                  <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                    aria-describedby="basic-addon1" [(ngModel)]="nameSearch">
+                </div>
+              </div>
+            </th>
+            <th width="300">
+              <div class="bdr-left table-hdr">
+                <div>
+                  <span>Service Definition</span>
+                  <span (click)="sortColumnType='A';sortListDefination('service_definition');">
+                    <i [ngClass]=" sortColumn == 'service_definition' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                      class="fa fa-signal" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <div>
+                  <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                    aria-describedby="basic-addon1" [(ngModel)]="definitionSearch">
+                </div>
+              </div>
+            </th>
+            <th width="300">
+              <div class="bdr-left table-hdr">
+                <div>
+                  <span>Price</span>
+                  <span
+                    (click)="sortColumnType='N';sortColumn = 'new_price';sortOrder = sortColumn === 'new_price' ? sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                    <i [ngClass]=" sortColumn == 'new_price' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                      class="fa fa-signal" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <div>
+                  <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label=""
+                    aria-describedby="basic-addon1" [(ngModel)]="priceSearch">
+                </div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let indx=index; let businessNature of businessNatureList | sortBy:sortColumn:sortOrder:sortColumnType | searchfilter:nameSearch:'service_type' | searchfilter:definitionSearch:'service_definition' | searchfilter:priceSearch:'price' | searchfilter:searchTxt:'service_type,service_definition,price' | listLengthfilter | paginate: paginationKey"
+            [ngClass]="selectedIndex == indx ? 'sel-row-highlight' : ''"
+            (click)="getSelectedBusinessNature(businessNature,indx)">
+            <td>{{businessNature.service_type}}<span
+                class="dn">{{ indx == 0 ? updateCount(businessNature.count) : ''}}</span></td>
+            <td>{{businessNature.service_definition}}</td>
+            <td class="qty-cost">
+              {{businessNature.price | currency: util.getCurrency() :'symbol-narrow'}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="treaPagination" *ngIf="businessNatureList.length != 0">
+      <ng-container *ngIf="constant.ITEM_COUNT != 0">
+        <div class="pull-right">
+          <span> {{1+(paginationKey.currentPage-1)*paginationKey.itemsPerPage}} -
+            {{(paginationKey.itemsPerPage <= listCount) && (paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage <= listCount) ? paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage : listCount}}</span><span>
+            of {{listCount}} items</span>
+        </div>
+        <div class="pull-right">
+          <select [(ngModel)]="paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+            <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo"> {{pageNo}} </option>
+          </select>
+          <span> items per page</span>
+        </div>
+        <div class="pull-right">
+          <pagination-controls (pageChange)="util.changePage($event, paginationKey)" directionLinks="true"
+            autoHide="false" previousLabel="Pre" nextLabel="Next" screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page" screenReaderCurrentLabel="You're on page">
+          </pagination-controls>
+        </div>
+        <div class="clearfix"></div>
+      </ng-container>
+    </div>
+    <div class="clearfix"></div>
+
+    <!-- Selected Business Type -->
+    <div class="selBusinessSection" *ngIf="selectedBusinessNature">
+      <h2 class="selectedTitle">{{selectedBusinessNature.service_type}}</h2>
+      <div id="businessNatureMark" class="selBusiness" canAccess="service_definition_create">
+        <!-- <span>Item Classes</span> -->
+        <div class="pull-right select-btn">
+          <!-- *ngIf="util.getRole() == 2" -->
+          <div class="dropdown">
+            <button mat-raised-button class="loc-btn dropdown-toggle edit-loc-btn" type="button"
+              data-toggle="dropdown">Edit
+            </button>
+            <ul class="dropdown-menu" style="right: 0px !important;left: auto;">
+              <li><a href="javascript:void(0)" class="loc-btn" (click)="editBusinessNature()">Edit Information</a></li>
+              <li><a href="javascript:void(0)" class="loc-btn" (click)="deleteBusinessNatureDailog()">Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+
+      <div class="businessDetails">
+
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Service Type</th>
+                <th>Service Definition</th>
+                <th>Service Description</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let service of selectedBusinessNature.service_definitions">
+                <td>{{selectedBusinessNature.service_type}}</td>
+                <td>
+                  {{service.service_definition}}
+                </td>
+                <td>
+                  {{service.description}}
+                </td>
+                <td>
+                  {{service.price | currency: util.getCurrency() :'symbol-narrow'}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- <div class="editBusinessDetails" *ngIf="action == 'edit'">
+                <div class="row MB30">
+                    <div class="col-sm-3">
+                        <div class="label-col">Business Type</div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="label-col">Construction</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th class="PadL0">Service Type</th>
+                            <th class="optional">Service Definition</th>
+                            <th class="optional">Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span><img src="assets/icon/close_icon.png" /></span></td>
+                            <td class="PadL0">Roofing</td>
+                            <td>
+                                <div class="closeIcon">
+                                    <img src="assets/icon/close_icon.png" /><span>Sodales</span>
+                                </div>
+                                <div class="closeIcon">
+                                    <img src="assets/icon/close_icon.png" /><span>Consectetur</span>
+                                </div>
+                                <div class="addIcon">
+                                    <img src="assets/icon/icon-add.png" /><span>Service Definition</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input autocomplete="nope" type="text" class="form-control" value="$300"/>
+                                </div>
+                                <div class="form-group">
+                                    <input autocomplete="nope" type="text" class="form-control" value="$300"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span><img src="assets/icon/close_icon.png" /></span></td>
+                            <td class="PadL0">Framing</td>
+                            <td>
+                                <div class="closeIcon">
+                                    <img src="assets/icon/close_icon.png" /><span>Sodales</span>
+                                </div>
+                                <div class="addIcon">
+                                    <img src="assets/icon/icon-add.png" /><span>Service Definition</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input autocomplete="nope" type="text" class="form-control" value="$300"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="PadL0">
+                                <div class="addIcon Mar0">
+                                    <img src="assets/icon/icon-add.png" /><span>Service Type</span>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="button-row">
+                    <button mat-raised-button class="trea-btn" (click)="changeAction('view')">Update</button>
+                    <button mat-raised-button class="trea-btn" (click)="changeAction('view')">Cancel</button>
+                </div>
+            </div> -->
+      <!-- <div class="errMsgCon" *ngIf="isError && isEditManufacturer">
+                <small>{{errMsg}}</small>
+            </div> -->
+    </div>
+
+  </div>
+</div>

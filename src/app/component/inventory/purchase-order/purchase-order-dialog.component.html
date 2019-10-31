@@ -1,0 +1,85 @@
+
+<div class="dialog width450" *ngIf="action == 'createSuccess'">
+    <span class="close-icon" (click)="closeDialog()">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </span>
+    <div class="dialog-hdr">
+        <div>&nbsp;</div>
+    </div>
+    <div>
+        <div class="dialog-hdr dialog-txt">{{successMsg}}.</div>
+        <div class="button-row">
+            <button id="" mat-raised-button class="trea-btn" (click)="addSuccess()">Done</button>
+        </div>    
+    </div>
+</div>
+
+<div class="dialog" *ngIf="action == 'removeConfirmation'">
+    <span class="close-icon" (click)="closeDialog()">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </span>
+    <div class="dialog-hdr">
+        <div>Remove Asset</div>
+    </div>
+    <div *ngIf="!isSuccess">
+        <div class="dialog-txt">
+            <div>Are you sure you want to remove this purchase order?</div>
+        </div>
+
+        <div class="errMsgCon" *ngIf="isError"> 
+            <small>{{errMsg}}</small>
+        </div>
+
+        <div class="action-btn">
+          <button id="removeButton" mat-raised-button class="trea-btn" (click)="removeData()">Yes</button>
+          <button mat-raised-button class="trea-btn" (click)="closeDialog()">Cancel</button>
+        </div>
+    </div>
+    <div *ngIf="isSuccess">
+        <div class="dialog-txt">{{successMsg}}.</div>
+        <div class="button-row">
+            <button id="" mat-raised-button class="trea-btn" (click)="closeDialog()">Done</button>
+        </div>    
+    </div>
+</div>
+
+
+<!-- Approve Confirmation -->
+<div class="dialog minW360" *ngIf="action == 'approveConfirmation'">
+    <span class="close-icon" (click)="closeDialog()">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </span>
+    <div class="dialog-hdr">
+        <div>Purchase Order Approval</div>
+    </div>
+    <!-- *ngIf="!isSuccess" -->
+    <div>
+        <div class="dialog-txt">
+            <div class="optional">
+                <form autocomplete="off" role="form" [formGroup]="addApproveConfirmationNoteForm">
+                    <div class="noteLbl">Note:</div>
+                    <div class="form-group">
+                        <!-- formControlName="approve_note" -->
+                        <textarea placeholder="(Optional)" class="inputDetail" rows="4" formControlName="approve_note"></textarea>
+                    </div>
+                </form>    
+            </div>
+        </div>
+
+        <div class="errMsgCon" *ngIf="isError"> 
+            <small>{{errMsg}}</small>
+        </div>
+
+        <div class="button-row">
+          <button id="confirm-btn" mat-raised-button class="trea-btn" (click)="confirmPO()">Confirm</button>
+          <button mat-raised-button class="trea-btn" (click)="closeDialog()">Cancel</button>
+        </div>
+    </div>
+    <!-- <div *ngIf="isSuccess">
+        <div class="dialog-txt">{{successMsg}}.</div>
+        <div class="button-row">
+            <button id="" mat-raised-button class="trea-btn" (click)="closeDialog()">Done</button>
+        </div>    
+    </div> -->
+</div>
+<!-- End -->

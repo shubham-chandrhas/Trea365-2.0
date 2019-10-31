@@ -1,0 +1,413 @@
+<div class="summarySection">
+  <div class="pageTitle">Reports</div>
+  <!-- Filter -->
+  <div class="reportOptionTabsTop">
+    <div class="tabs">
+      <div class="infoText">Week</div>
+    </div>
+    <div class="tabs">
+      <div class="infoText">Two-week</div>
+    </div>
+    <div class="tabs">
+      <div class="infoText">30 days</div>
+    </div>
+    <div class="tabs">
+      <div class="infoText">90 days</div>
+    </div>
+    <div class="tabs">
+      <div class="infoText">Last 365 days</div>
+    </div>
+    <div class="tabs">
+      <div class="infoText">Till now</div>
+    </div>
+
+    <div class="clearfix"></div>
+
+  </div>
+  <div class="reportOptionTabsBottom ">
+    <div class="tabs">
+      <div class="col-sm-0 last">Last : </div>
+      <div class="vertLine"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta1" type="radio" id="inventoryOpt1" value="7"
+          (change)="timeLineChangeSummary($event,'seven','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.seven">
+        <label for="inventoryOpt1"></label>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="vertLine"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta2" type="radio" id="inventoryOpt2" value="14"
+          (change)="timeLineChangeSummary($event,'fourteen','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.fourteen">
+        <label for="inventoryOpt2"></label>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="vertLine" id="myid"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta3" type="radio" id="inventoryOpt3" value="30"
+          (change)="timeLineChangeSummary($event,'thirty','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.thirty">
+        <label for="inventoryOpt3"></label>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="vertLine"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta4" type="radio" id="inventoryOpt4" value="90"
+          (change)="timeLineChangeSummary($event,'ninty','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.ninty">
+        <label for="inventoryOpt4"></label>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="vertLine"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta5" type="radio" id="inventoryOpt5" value="365"
+          (change)="timeLineChangeSummary($event,'threesixtyfive','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.threesixtyfive">
+        <label for="inventoryOpt5"></label>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="vertLine"></div>
+      <div class="treaRadioBtn">
+        <input autocomplete="nope" name="inventoryOpta6" type="radio" id="inventoryOpt6" value="730"
+          (change)="timeLineChangeSummary($event,'seventhirty','inventory',inventoryTimeLineData)"
+          [checked]="inventoryTimeLineData.seventhirty">
+        <label for="inventoryOpt6"></label>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div class="clearfix"></div>
+  <!-- filter End -->
+  <form autocomplete="off"  role="form" [formGroup]="reports">
+  <div class="treaAccord summaryAccord">
+    <!-- Inventory And Assets -->
+    <div class="accordRow">
+      <input autocomplete="nope" type="checkbox" [formControl]="isInventoryAssetChecked"  (change)="changedInventoryAsset($event,reports)">
+      <div class="info-col head">
+        <i></i>
+        Inventory and Assets
+      </div>
+
+      <div class="subItem">
+        <div class="workflowWrap">
+          <div class="panelBody">
+            <!-- Data -->
+            <div class="row">
+              <!-- Financial Report -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Present value of products & materials</div>
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.inventory.value_product_material | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number Of Product Materails -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Total products & materials</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.inventory.count_product_material : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Asset Needing Repair -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Assets needing repair</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.inventory.asset_needs_repair : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Asset Financial Report -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Present value of assets</div>
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.inventory.asset_present_value | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number Of Asset on WO -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Assets on work orders</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.inventory.asset_in_wo : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number Of Asset Assigned -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Assets assigned to people</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.inventory.asset_assigned : ''}}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Clients -->
+    <div class="accordRow">
+      <input autocomplete="nope" type="checkbox" [formControl]="isClientChecked"  (change)="changedClient($event,reports)">
+      <div class="info-col head">
+        <i></i>
+        Clients
+      </div>
+
+      <div class="subItem">
+        <div class="workflowWrap">
+          <div class="panelBody">
+            <!-- Filter -->
+
+            <!-- Data -->
+            <div class="row">
+              <!-- total clients -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Total clients</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.client.total_clients : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- new clients -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">New clients</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.client.new_clients : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active clients -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Active clients</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.client.active_clients : ''}}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Financials -->
+    <div class="accordRow">
+      <input autocomplete="nope" type="checkbox" [formControl]="isFinancialChecked"  (change)="changedFinancial($event,reports)">
+      <div class="info-col head">
+        <i></i>
+        Financials
+      </div>
+
+      <div class="subItem">
+        <div class="workflowWrap">
+          <div class="panelBody">
+            <!-- Filter -->
+
+            <!-- Data -->
+            <div class="row">
+              <!-- Financial Report -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Payable</div>
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.financial.payable_amount | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Number Of Product Materails -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Receivable</div>
+
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.financial.receivable_amount | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Asset Needing Repair -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Cash flow net</div>
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.financial.cash_flow_net | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Workflow -->
+    <div class="accordRow">
+      <input autocomplete="nope" type="checkbox" [formControl]="isWorkflowChecked"  (change)="changedWorkflow($event,reports)">
+      <div class="info-col head">
+        <i></i>
+        Workflow
+      </div>
+
+      <div class="subItem">
+        <div class="workflowWrap">
+          <div class="panelBody">
+            <!-- Filter -->
+
+            <!-- Data -->
+            <div class="row">
+              <!-- PE Pending for approval -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Quotations pending approval</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.workflow.pe_pending_approval : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- PE need schedule -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Quotations needs to be scheduled</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.workflow.pe_pending_schedule : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Value of pending quote -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Value of pending quotations</div>
+                  <div class="amtTxt txt-green">
+                    {{pageData.dashboard ? (pageData.dashboard.workflow.pending_pe_cost | currency: util.getCurrency() :'symbol-narrow') : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total active work order -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Total Active work orders</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.workflow.active_wo : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total Schedule Work Order -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Total scheduled work orders</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.workflow.scheduled_work_order : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Service type count in WO -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Total services</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.workflow.service_type_count : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ocupied Staff in WO -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Percentage of occupied staff</div>
+
+                  <div class="pieChart">
+                    <div class="chartWrap">
+                      <canvas id="auChart" width="100" height="100"></canvas>
+                      <div class="chartStat" [ngStyle]="{'color': chartData.auData.backgroundColor[0] }">
+                        {{pageData.dashboard ? pageData.dashboard.workflow.ocupied_staff : ''}}%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Staff -->
+    <div class="accordRow">
+      <input autocomplete="nope" type="checkbox" [formControl]="isStaffChecked"  (change)="changedStaff($event,reports)">
+      <div class="info-col head">
+        <i></i>
+        Staff
+      </div>
+
+      <div class="subItem">
+        <div class="workflowWrap">
+          <div class="panelBody">
+            <!-- Filter -->
+
+            <!-- Data -->
+            <div class="row">
+              <!-- Active Employee -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Active Employees</div>
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.staff.active_employees : ''}}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active Subcontracor -->
+              <div class="col-sm-4">
+                <div class="contentBox">
+                  <div class="midText">Active Subcontractor</div>
+
+                  <div class="amtTxt">
+                    {{pageData.dashboard ? pageData.dashboard.staff.active_contractors : ''}}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>

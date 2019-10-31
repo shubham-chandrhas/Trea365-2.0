@@ -1,0 +1,256 @@
+<div class="clearfix"></div>
+<div class="invoiceSection">
+
+    <div class="pageTitle">Invoice</div>
+
+    <!-- Form Open -->
+
+        <!-- Invoice Heading Section -->
+        <div class="row">
+            <div class="col-lg-6"></div>
+            <div class="col-lg-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th class="text-right">Client</th>
+                        <td>{{pageData.client_name}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Conact Name</th>
+                        <td>{{pageData.client_contact_name}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" for="email_id">Email</th>
+                        <td>
+                            {{ pageData.client_email }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Phone Number</th>
+                        <td>{{pageData.client_phone_no}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- /Invoice Heading section -->
+
+        <!-- Billing & Work Location -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-6 invoiceDetTbl invoiceTopTbl">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Billing Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ pageData.client_billing_location }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-lg-6 invoiceDetTbl invoiceTopTbl" *ngIf="pageData.client_work_location">
+                    
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th class="text-center">Work Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ pageData.client_work_location }}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <!-- /Billing & Work Location -->
+        
+        <!-- Upper Info -->
+        <div class="invoiceDetTbl invoiceTopTbl">
+            
+            <div>
+
+                <table class="table table-bordered" width="100%">
+
+                    <thead>
+                        <tr>
+                            <th>Mid Section</th>
+                            <th>Customer PO#</th>
+                            <th>Payment Term</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{ pageData?.invoice_midsection }}
+                            </td>
+                            <td>
+                                {{ pageData?.po_nos}}
+                            </td>
+                            <td>
+                                {{ pageData.due_date | date }}
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+        <!-- /Upper Info -->
+
+        <!-- Service & Material Section  -->
+        <div class="invoiceDetTbl">
+            <div class="table-responsive">
+                <table class="table table-border" width="100%">
+                    <thead>
+                        <tr>
+                            <th >Services and Materials</th>
+                            <th width="20%">Cost ( {{ util.getCurrencySign() }} ) </th>
+                            <th width="20%">Invoice Quantity</th>
+                            <th width="20%" class="text-right">Invoice Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let service of pageData.services">
+                            <td>
+                                {{ service?.service_definition }}
+                                <div *ngIf="service?.details">
+                                    <strong><small>Description : </small></strong>
+                                    {{ service?.details }}
+                                </div>
+                            </td>
+                            <td>{{ service.cost | currency: util.getCurrency() :'symbol-narrow' }}</td>
+                            <td>{{ service.quantity }} {{ service?.uom }}</td>
+                            <td class="text-right">{{service.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                        </tr>
+
+                        <tr *ngFor="let material of pageData.product_materials">
+                            <td>{{material.item_definition_name}}
+                                <div *ngIf="material?.details">
+                                    <strong><small>Description : </small></strong>
+                                    {{ material?.details }}
+                                </div>
+                            </td>
+                            <td>{{material.cost | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                            <td>{{material.quantity}} {{ material?.uom }}</td>
+                            <td class="text-right">{{material.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                        </tr>
+                        
+                        <tr *ngFor="let additional_item of pageData.additional_items">
+                            <td>{{additional_item.name}}
+                                <div *ngIf="additional_item?.details">
+                                    <strong><small>Description : </small></strong>
+                                    {{ additional_item?.details }}
+                                </div>
+                            </td>
+                            <td>{{additional_item.cost | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                            <td>{{additional_item.quantity}} {{ service?.uom }}</td>
+                            <td class="text-right">{{additional_item.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>     
+        </div>
+        <!-- /Service & materila Section -->
+
+        <!-- Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+        <div class="payScheduleWrap">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="commentSection" *ngIf="pageData?.notes">
+                        <br>
+                        <label>Notes</label>
+                        <div class="">
+                            {{ pageData?.notes }}
+                        </div>
+                        <br>
+                    </div>
+                    <div class="checkBox">
+                        <label>
+                            <input autocomplete="nope" type="checkbox" [(ngModel)]="isSendInvoices" checked="true" name="isSendInvoices" id="isSendInvoices">
+                            <span class="iconChk"><i class="fa fa-check"></i> </span>
+                            Send Invoice to {{pageData.client_name}} ( {{pageData.client_email}} )
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-6 text-right">
+                            <div class="label-col">Subtotal</div>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <div class="info-col"> {{ pageData.subtotal | currency: util.getCurrency() :'symbol-narrow' }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 text-right">
+                            <div class="info-col">Shipping and Handling</div>
+                        </div>
+                        <div class="col-sm-6  text-right">
+                            {{ pageData.shipping_and_handling | currency: util.getCurrency() :'symbol-narrow' }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6  text-right">
+                            <div class="info-col">Adjustment</div>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            {{ pageData.adjustment | currency: util.getCurrency() :'symbol-narrow' }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6  text-right">
+                            <div class="info-col taxes">
+                                <span>Tax @</span>
+                                {{ pageData.taxes }}
+                                %
+                            </div>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <div class="info-col ">
+                                {{ pageData.tax_amount | currency: util.getCurrency() :'symbol-narrow' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 text-right">
+                            <div class="label-col">Total Payment Amount </div>
+                        </div>
+                        <div class="col-sm-6 font-bold text-right">
+                             {{ pageData.total_payment_amount | currency: util.getCurrency() :'symbol-narrow'  }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+        <div class="errMsgCon" *ngIf="isError">
+            <small>{{errMsg}}</small>
+        </div>
+
+        <div class="button-row">
+            <!-- routerLink="/account/csa/create-invoice" -->
+        <button type="button" mat-raised-button class="trea-btn" (click)="edit()">Edit</button>
+        <button
+        class="trea-btn" type="button" mat-raised-button id="previewBtn" (click)="previewDoc()">
+        Save & Preview
+      </button>
+        <button type="button" mat-raised-button class="trea-btn" (click)="sendInvoice()" id="send">Submit</button>
+        <button type="button" mat-raised-button class="trea-btn" (click)="cancel()">Cancel </button>
+        </div>
+    
+    <!-- Form Close -->
+    
+</div>

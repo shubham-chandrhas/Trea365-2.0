@@ -1,0 +1,325 @@
+<div class="ngsc-table-scroll">
+  <div class="ngsc-table-wrapper-outer">
+    <div class="ngsc-table-wrapper" id="timelineContainer">
+      <table class="ngsc-table">
+
+        <thead class="ngsc-head">
+          <tr>
+            <th class="ngsc-fixed-col corner-cell" rowspan="2">
+              <div
+                style="position: absolute;left: 0px;top: 0px;height: 40px;width: 210px;line-height: 40px;background-color: #243449;">
+                Resource
+                <span class="cursorPtr" (click)="sortList()"><i
+                    [ngClass]=" sortOrder == 'asc' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal cursorPtr"
+                    aria-hidden="true"></i></span>
+              </div>
+
+            </th>
+            <th *ngFor="let date of getHeaderDates()" class="ngsc-date-cell" [style.width]="setDayWidth(displayDays)">
+              <div class="ngsc-date" [style.width]="setDayWidth(displayDays)">
+                {{date}}
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <td *ngFor="let date of getHeaderDates()" class="time-row">
+              <span>12am</span>
+              <!-- <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span> -->
+              <span [style.visibility]="getHourVisibility()">6am</span>
+              <!-- <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span> -->
+              <span>12pm</span>
+              <!-- <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span> -->
+              <span [style.visibility]="getHourVisibility()">6pm</span>
+              <!--  <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span> -->
+            </td>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- A row for each resource -->
+          <tr *ngFor="let resource of schedule.resources; let i = index;">
+
+            <th class="ngsc-fixed-col"
+              style="position: absolute;left: 0px;border-right: 1px solid #CCC;width: 210px;height: 100%;vertical-align: top;">
+
+              <div class="resource-cell" (click)="getSelectedResource(resource)">
+
+                <ng-container *ngIf="resource.type == 'employee'
+                        || resource.type == 'authorized user' ">
+                  <img src="assets/icon/employee.png" alt="" class="resource-icon">
+                </ng-container>
+
+                <ng-container *ngIf="resource.type == 'asset' ">
+                  <img src="assets/icon/asset.png" alt="" class="resource-icon">
+                </ng-container>
+
+                <ng-container *ngIf="resource.type == 'subcontractor' ">
+                  <img src="assets/icon/subcontractor.png" alt="" class="resource-icon">
+                </ng-container>
+
+                <span class="resource-name">{{ resource.name }}</span>
+
+              </div>
+
+            </th>
+
+            <td [attr.colspan]=getHeaderDates().length class="ngsc-resource-events  timeline-td">
+
+              <!-- A list of events for this resource -->
+              <ul class="ngsc-events-list">
+
+                <li *ngFor="let event of resource.events; let ei = index;" 
+                    class="ngsc-event event-type-{{event.type}} event-{{i}}-{{ei}}"
+                  [style.width]="setEventWidth(event)" [style.left]="setEventPos(event)" (click)="getSelectedResource(resource)">
+
+                    <div [style.marginLeft.%]="alignEventText(event, i, ei)">
+                        <a href="javascript:void(0)">
+                            {{ event.name }}<br>
+                            <small>{{ event.start  | date : "MM/dd/yyyy hh:mm a" }} -
+                            {{ event.end | date : "MM/dd/yyyy hh:mm a" }}</small>
+                        </a>
+                    </div>
+                </li>
+
+                <li *ngIf="resource.events.length == 0" class="ngsc-noevents">
+                  &nbsp;<br />&nbsp;
+                </li>
+
+              </ul>
+
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- <div>
+ <pre>
+   {{ schedule | json }}
+ </pre>
+</div> -->
+<div>
+  <ul class="timeline-legend">
+    <li class="type-client">Client</li>
+    <li class="type-internal">Internal Work</li>
+    <li class="type-inspection">Site Inspection</li>
+    <li class="type-other">Other</li>
+  </ul>
+</div>
+
+<div>
+  <div id="moreInfo" class="qutationreviewWrap" *ngIf="selectedResource">
+
+    <h2 class="selectedTitle MB15" *ngIf="selectedResource.type == 'employee'">Schedule for <a href="javascript:void(0)"
+        target="_blank"
+        [routerLink]="['/hr/csa/employee-list/', selectedResource.user.id]">{{selectedResource.name}}</a></h2>
+
+    <h2 class="selectedTitle MB15" *ngIf="selectedResource.type == 'authorized user'">Schedule for <a
+        href="javascript:void(0)" target="_blank"
+        [routerLink]="['/hr/csa/employee-list/', selectedResource.user.id]">{{selectedResource.name}}</a></h2>
+
+    <h2 class="selectedTitle MB15" *ngIf="selectedResource.type == 'subcontractor'">Schedule for <a
+        href="javascript:void(0)" target="_blank"
+        [routerLink]="['/hr/csa/sub-contractor-list/', selectedResource.user.id]">{{selectedResource.name}}</a></h2>
+
+    <h2 class="selectedTitle MB15" *ngIf="selectedResource.type == 'asset'">Schedule for <a 
+        target="_blank" href="javascript:void(0)"
+        [routerLink]="['/inventory/csa/asset-list/', selectedResource.asset.asset_id]">{{selectedResource.name}}</a>
+    </h2>
+
+    <button canAccess="schedule_add"
+      *ngIf="selectedResource.type == 'employee' || selectedResource.type == 'subcontractor' || selectedResource.type == 'authorized user' "
+      class="btn trea-btn pull-right" style="width:150px; margin-top:-40px;"
+      (click)="addSchedule('person',selectedResource)">Add Schedule</button>
+
+    <button canAccess="asset_schedule_create" *ngIf="selectedResource.type == 'asset'" class="btn trea-btn pull-right"
+      style="width:150px; margin-top:-40px;" (click)="addSchedule('Asset',selectedResource)">Add Schedule</button>
+
+    <div class="row"
+      *ngIf="selectedResource.type == 'employee' || selectedResource.type == 'subcontractor' || selectedResource.type == 'authorized user' ">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-sm-4 info-col">Date Generated:</div>
+          <div class="col-sm-8">{{util.getFormatedDate(selectedResource.user.date_generated)}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 info-col">Name:</div>
+          <div class="col-sm-8">{{selectedResource.name}}</div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 info-col">Employee Id:</div>
+          <div class="col-sm-8">{{selectedResource.user.employee_id ? selectedResource.user.employee_id : 'N/A'}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 info-col">Title:</div>
+          <div class="col-sm-8">{{selectedResource.user.title ? selectedResource.user.title : 'N/A'}}</div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-sm-4 info-col">Email:</div>
+          <div class="col-sm-8"><a href="mailto:{{selectedResource.user.email}}">{{selectedResource.user.email}}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 info-col">Work Phone:</div>
+          <div class="col-sm-8">{{selectedResource.user.work_phone ? selectedResource.user.work_phone : 'N/A'}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4 info-col">Personal Phone:</div>
+          <div class="col-sm-8">{{selectedResource.user.personal_phone ? selectedResource.user.personal_phone : 'N/A'}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 info-col">Emergency Contact:</div>
+          <div class="col-sm-8">
+            {{selectedResource.user.emergency_contact ? selectedResource.user.emergency_contact : 'N/A'}}<br />
+            {{selectedResource.user.emergency_number}}<br />
+            {{selectedResource.user.relationship}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="selectedResource.type == 'asset'">
+
+      <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-4 info-col">Manufacturer:</div>
+            <div class="col-sm-8">{{selectedResource.asset.manufacturer}}</div>
+          </div>
+
+          <div class="row" *ngIf="selectedResource.asset.item_definition_no">
+            <div class="col-sm-4 info-col">Item Definition No:</div>
+            <div class="col-sm-8">{{selectedResource.asset.item_definition_no}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-4 info-col">Asset Name:</div>
+            <div class="col-sm-8">{{selectedResource.asset.short_tag}}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 info-col">UPC:</div>
+            <div class="col-sm-8">
+              <span *ngIf="selectedResource.asset.upc">
+                {{ selectedResource.asset.upc }} </span>
+              <span *ngIf="!selectedResource.asset.upc"> - </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 info-col">Serial No:</div>
+            <div class="col-sm-8">
+              <span *ngIf="selectedResource.asset.serial_no">{{ selectedResource.asset.serial_no }} </span>
+              <span *ngIf="!selectedResource.asset.serial_no"> - </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 info-col">Assigned to:</div>
+            <div class="col-sm-8">
+              <span *ngIf="selectedResource.asset.assign_to">{{ selectedResource.asset.assign_to }} </span>
+              <span *ngIf="!selectedResource.asset.assign_to"> - </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-4 info-col">Scan code:</div>
+            <div class="col-sm-8">{{selectedResource.asset.scan_code}}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 info-col">Location:</div>
+            <div class="col-sm-8">
+              <span *ngIf="selectedResource.asset.location">{{ selectedResource.asset.location }} </span>
+              <span *ngIf="!selectedResource.asset.location"> - </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="servicesDetails MT20">
+      <h4 class="detailsHeading">Schedule</h4>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Details</th>
+              <th>W/O</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="selectedResource.events.length > 0">
+            <tr *ngFor="let indx=index; let event of selectedResource.events">
+              <td class="col-sm-2 namewidth">
+                {{util.getFormatedDate(event.start)}} - {{util.getFormatedDate(event.end)}}
+              </td>
+              <td class="col-sm-4 namewidth">
+                {{event.start | date:"hh:mm a"}} - {{event.end | date:"hh:mm a"}}
+              </td>
+              <td class="col-sm-4 namewidth">
+                {{event?.schedule?.details ? event.schedule.details : 'N/A'}}
+              </td>
+              <td class="col-sm-8">
+                <div class="txtActive" *ngIf="event.wo_number"><a href="javascript:void(0)"
+                    routerLink="{{ event.url }}">#{{event.wo_number}}</a></div>
+                <div class="txtActive" *ngIf="!event.wo_number">N/A</div>
+
+              </td>
+              <td>
+                <div *ngIf="event.type == 'other'">
+                  <button canAccess="schedule_add" *ngIf="selectedResource.type == 'employee'
+                                    || selectedResource.type == 'subcontractor'" class="btn trea-btn pull-right"
+                    style="width:80px;" (click)="Edit(event,'person')">Edit</button>
+                  <button canAccess="asset_schedule_create" *ngIf="selectedResource.type == 'asset'" class="btn trea-btn pull-right" style="width:80px;"
+                    (click)="Edit(event,'Asset')">Edit</button>
+                </div>
+              </td>
+              <td>
+                <div  *ngIf="event.type == 'other'">
+
+                  <a canAccess="schedule_add" _ngcontent-c9="" *ngIf="selectedResource.type == 'employee'
+                                    || selectedResource.type == 'subcontractor'"
+                    (click)="deleteSchedule(event, selectedResource, 'Person')" href="javascript:void(0)"><img
+                      _ngcontent-c9="" alt="Remove" src="assets/icon/close_icon.png"></a>
+
+                  <a canAccess="asset_schedule_create" _ngcontent-c9="" *ngIf="selectedResource.type == 'asset'"
+                    (click)="deleteSchedule(event, selectedResource, 'Asset')" href="javascript:void(0)">
+                    <img _ngcontent-c9="" alt="Remove" src="assets/icon/close_icon.png"></a>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

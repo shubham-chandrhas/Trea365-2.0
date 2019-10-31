@@ -1,0 +1,77 @@
+<div class="supplier-section" [ngClass]="currentPath == 'add-supplier' ? 'MB30' : ''">
+        <h3 class="pageTitle">Supplier Review</h3>
+        <div class="addNewSupFormCov clearfix">
+            <div class="col-sm-12">
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor" for="name">Name</label>
+                        <div class="col-sm-8 info-col">{{supInfo.reqObj.supplierName}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                        <div class="form-group clearfix">
+                            <label class="col-sm-4 control-label txtColor" for="paymentTerms">Payment Terms</label>
+                            <div class="col-sm-8 info-col">{{supInfo.reqObj.paymentTerms ? supInfo.reqObj.paymentTerms + ' '+ constant.DAYS : ""}}</div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor" for="address1">Address </label>
+                        <div class="col-sm-8 info-col">{{util.concatenateStrings(supInfo.reqObj.address2,supInfo.reqObj.address1)}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor" for="email">Email</label>
+                        <div class="col-sm-8 info-col">{{supInfo.reqObj.emailId}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor" for="phoneNumber">Phone Number</label>
+                        <div class="col-sm-8 info-col">{{supInfo.reqObj.phoneNumber}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label txtColor" for="comment">Comment</label>
+                        <div class="col-sm-8 info-col">
+                                {{supInfo.reqObj.comment}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="errMsgCon MT20" *ngIf="isError">
+                    <small>{{errMsg}}.</small>
+                 </div>
+                 <div class="clearfix">
+                    <div class="button-row text-center">
+                        <button mat-raised-button class="trea-btn" (click)="goToEditDetails()">Edit</button>
+                        <button mat-raised-button id="addSupBtn" class="trea-btn" (click)="addSupplier()">Submit</button>
+                        <button mat-raised-button class="trea-btn" (click)="cancelSupplier()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

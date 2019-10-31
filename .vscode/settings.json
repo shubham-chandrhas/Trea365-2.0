@@ -1,0 +1,9 @@
+{
+    "editor.detectIndentation": false,
+    "git.ignoreLimitWarning": true,
+    "editor.autoIndent": false,
+    "prettier.tabWidth": 4,
+    "editor.renderLineHighlight": "none",
+    "editor.minimap.maxColumn": 2000,
+    "workbench.colorCustomizations": {}
+}

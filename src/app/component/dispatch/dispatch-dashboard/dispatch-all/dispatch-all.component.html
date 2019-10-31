@@ -1,0 +1,76 @@
+<div class="dispatchSection">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="mapWrap" *ngIf="showMap">
+        <agm-map #AgmMap [minZoom]="2" [latitude]="latitude" [longitude]="longitude" [fitBounds]="true"
+          [mapTypeId]="mapTypeId">
+
+          <agm-marker *ngIf=" woList.length == 0;let popref = &quot;wo-{company_id}&quot;else getLocations" [agmFitBounds]="true"
+            [latitude]="latitude" [longitude]="longitude" [iconUrl]="iconUrl" (mouseOver)="util.OpenWindow(popref)" (mouseOut)="util.CloseWindow(popref)">
+               <agm-info-window  #popref>
+                  <p>
+                    <strong>{{ company_name }}</strong>
+                  </p>
+                </agm-info-window>
+            </agm-marker>
+          <ng-template #getLocations>
+            <span *ngFor="
+              let marker of woList;
+              let popref = &quot;wo-{marker.id}&quot;
+            ">
+              <agm-marker *ngIf="marker.latitude && marker.longitude" [agmFitBounds]="true" [latitude]="marker.latitude"
+                [longitude]="marker.longitude" [iconUrl]="marker.icon"
+                (markerClick)="changeDispatchTab('work-orders', marker)" (mouseOver)="util.OpenWindow(popref)"
+                (mouseOut)="util.CloseWindow(popref)">
+                <agm-info-window #popref>
+                  <p>
+                    <strong>WO Id:</strong> {{ marker.work_order_id }}<br />
+                    <strong>WO Number:</strong> {{ marker.work_order_no }}<br />
+                    <strong>WO Latitude:</strong> {{ marker.latitude }}<br />
+                    <strong>WO Longitude:</strong> {{ marker.longitude }}<br />
+                    <strong>WO Status:</strong> {{ marker.status }}<br />
+                  </p>
+                </agm-info-window>
+              </agm-marker>
+            </span>
+          </ng-template>
+
+          <span *ngFor="
+              let marker of staffList;
+              let popref = &quot;staff-{marker.id}&quot;
+            ">
+            <agm-marker *ngIf="marker.latitude && marker.longitude" [agmFitBounds]="true" [latitude]="marker.latitude"
+              [longitude]="marker.longitude" [iconUrl]="marker.icon" (markerClick)="changeDispatchTab('staff', marker)"
+              (mouseOver)="util.OpenWindow(popref)" (mouseOut)="util.CloseWindow(popref)">
+              <agm-info-window #popref>
+                <p>
+                  <strong>Staff Id:</strong> {{ marker.id }}<br />
+
+                  <strong>Staff Name:</strong> {{ marker.name }}<br />
+                  <strong>Staff Latitude:</strong> {{ marker.latitude }}<br />
+                  <strong>Staff Longitude:</strong> {{ marker.longitude }}<br />
+                </p>
+              </agm-info-window>
+            </agm-marker>
+          </span>
+        </agm-map>
+        <div class="quotNav button-row">
+          <button [ngClass]="mapTypeId == 'terrain' ? 'act-option' : ''" (click)="setMapType('terrain')"
+            mat-raised-button class="trea-btn">
+            Terrain
+          </button>
+          <button [ngClass]="mapTypeId == 'satellite' ? 'act-option' : ''" (click)="setMapType('satellite')"
+            mat-raised-button class="trea-btn">
+            Satellite
+          </button>
+          <button [ngClass]="mapTypeId == 'roadmap' ? 'act-option' : ''" (click)="setMapType('roadmap')"
+            mat-raised-button class="trea-btn">
+            Road Map
+          </button>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</div>

@@ -1,0 +1,274 @@
+
+{
+  "header": {
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "location": "OnFatalError",
+    "filename": "report.20190722.154232.28703.001.json",
+    "dumpEventTime": "2019-07-22T15:42:32Z",
+    "dumpEventTimeStamp": "1563790352378",
+    "processId": 28703,
+    "commandLine": [
+      "node",
+      "/home/dell/.nvm/versions/node/v11.9.0/bin/ng",
+      "serve",
+      "--prod"
+    ],
+    "nodejsVersion": "v11.9.0",
+    "glibcVersion": "2.12",
+    "wordSize": 64,
+    "componentVersions": {
+      "node": "11.9.0",
+      "v8": "7.0.276.38-node.16",
+      "uv": "1.25.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "67",
+      "nghttp2": "1.34.0",
+      "napi": "4",
+      "llhttp": "1.0.1",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1a",
+      "cldr": "34.0",
+      "icu": "63.1",
+      "tz": "2018e",
+      "unicode": "11.0",
+      "arch": "x64",
+      "platform": "linux",
+      "release": "node"
+    },
+    "osVersion": "Linux 4.4.0-154-generic #181-Ubuntu SMP Tue Jun 25 05:29:03 UTC 2019",
+    "glibc": "2.23",
+    "machine": "Linux 4.4.0-154-generic #181-Ubuntu SMP Tue Jun 25 05:29:03 UTC 2019dell-Latitude-3490 x86_64"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    " [pc=0xa61a28] report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::string, v8::Local<v8::String>) [ng serve --prod]",
+    " [pc=0x9526e3] node::OnFatalError(char const*, char const*) [ng serve --prod]",
+    " [pc=0xb28c2e] v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [ng serve --prod]",
+    " [pc=0xb28e64] v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [ng serve --prod]",
+    " [pc=0xf25bd2]  [ng serve --prod]",
+    " [pc=0xf25cd8] v8::internal::Heap::CheckIneffectiveMarkCompact(unsigned long, double) [ng serve --prod]",
+    " [pc=0xf323f8] v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [ng serve --prod]",
+    " [pc=0xf32f0b] v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [ng serve --prod]",
+    " [pc=0xf35c41] v8::internal::Heap::AllocateRawWithRetryOrFail(int, v8::internal::AllocationSpace, v8::internal::AllocationAlignment) [ng serve --prod]",
+    " [pc=0xeffe74] v8::internal::Factory::NewFillerObject(int, bool, v8::internal::AllocationSpace) [ng serve --prod]",
+    " [pc=0x11b582e] v8::internal::Runtime_AllocateInNewSpace(int, v8::internal::Object**, v8::internal::Isolate*) [ng serve --prod]",
+    " [pc=0x1dde5d44fc5d] "
+  ],
+  "javascriptHeap": {
+    "totalMemory": 1527250944,
+    "totalCommittedMemory": 1521958368,
+    "usedMemory": 1445100320,
+    "availableMemory": 26508536,
+    "memoryLimit": 1526909922,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 524288,
+        "committedMemory": 42224,
+        "capacity": 515584,
+        "used": 33520,
+        "available": 482064
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 29693280,
+        "capacity": 16498688,
+        "used": 13628216,
+        "available": 2870472
+      },
+      "old_space": {
+        "memorySize": 1417875456,
+        "committedMemory": 1417824720,
+        "capacity": 1393715680,
+        "used": 1370559680,
+        "available": 23156000
+      },
+      "code_space": {
+        "memorySize": 12582912,
+        "committedMemory": 11862880,
+        "capacity": 10630176,
+        "used": 10630176,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 16789504,
+        "committedMemory": 16610912,
+        "capacity": 5967440,
+        "used": 5967440,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 45924352,
+        "committedMemory": 45924352,
+        "capacity": 44281288,
+        "used": 44281288,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 0,
+        "used": 0,
+        "available": 0
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 488.8,
+    "kernelCpuSeconds": 488.8,
+    "cpuConsumptionPercent": 6.25148e-05,
+    "maxRss": 1717305344,
+    "pageFaults": {
+      "IORequired": 0,
+      "IONotRequired": 1373633
+    },
+    "fsActivity": {
+      "reads": 56,
+      "writes": 0
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 325.976,
+    "kernelCpuSeconds": 325.976,
+    "cpuConsumptionPercent": 4.16905e-05,
+    "fsActivity": {
+      "reads": 56,
+      "writes": 0
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "XDG_VTNR": "7",
+    "MANPATH": "/home/dell/.nvm/versions/node/v11.9.0/share/man:/usr/local/man:/usr/local/share/man:/usr/share/man",
+    "XDG_SESSION_ID": "c7",
+    "CLUTTER_IM_MODULE": "xim",
+    "XDG_GREETER_DATA_DIR": "/var/lib/lightdm-data/dell",
+    "SESSION": "ubuntu",
+    "NVM_CD_FLAGS": "",
+    "GPG_AGENT_INFO": "/home/dell/.gnupg/S.gpg-agent:0:1",
+    "TERM": "xterm-256color",
+    "SHELL": "/bin/bash",
+    "VTE_VERSION": "4205",
+    "NVM_PATH": "/home/dell/.nvm/versions/node/v11.9.0/lib/node",
+    "QT_LINUX_ACCESSIBILITY_ALWAYS_ON": "1",
+    "WINDOWID": "67108874",
+    "UPSTART_SESSION": "unix:abstract=/com/ubuntu/upstart-session/1001/1685",
+    "GNOME_KEYRING_CONTROL": "",
+    "GTK_MODULES": "gail:atk-bridge:unity-gtk-module",
+    "NVM_DIR": "/home/dell/.nvm",
+    "USER": "dell",
+    "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:",
+    "QT_ACCESSIBILITY": "1",
+    "XDG_SESSION_PATH": "/org/freedesktop/DisplayManager/Session0",
+    "XDG_SEAT_PATH": "/org/freedesktop/DisplayManager/Seat0",
+    "SSH_AUTH_SOCK": "/run/user/1001/keyring/ssh",
+    "DESKTOP_MODE": "1",
+    "DEFAULTS_PATH": "/usr/share/gconf/ubuntu.default.path",
+    "XDG_CONFIG_DIRS": "/etc/xdg/xdg-ubuntu:/usr/share/upstart/xdg:/etc/xdg",
+    "PATH": "/home/dell/.nvm/versions/node/v11.9.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "DESKTOP_SESSION": "ubuntu",
+    "QT_IM_MODULE": "ibus",
+    "QT_QPA_PLATFORMTHEME": "appmenu-qt5",
+    "NVM_NODEJS_ORG_MIRROR": "https://nodejs.org/dist",
+    "XDG_SESSION_TYPE": "x11",
+    "JOB": "unity-settings-daemon",
+    "PWD": "/var/torinit/trea365/TreaFrontend2.0",
+    "XMODIFIERS": "@im=ibus",
+    "GNOME_KEYRING_PID": "",
+    "LANG": "en_IN",
+    "GDM_LANG": "en_US",
+    "MANDATORY_PATH": "/usr/share/gconf/ubuntu.mandatory.path",
+    "IM_CONFIG_PHASE": "1",
+    "COMPIZ_CONFIG_PROFILE": "ubuntu",
+    "GDMSESSION": "ubuntu",
+    "SESSIONTYPE": "gnome-session",
+    "GTK2_MODULES": "overlay-scrollbar",
+    "HOME": "/home/dell",
+    "XDG_SEAT": "seat0",
+    "SHLVL": "1",
+    "LANGUAGE": "en_IN:en",
+    "GNOME_DESKTOP_SESSION_ID": "this-is-deprecated",
+    "UPSTART_INSTANCE": "",
+    "UPSTART_EVENTS": "xsession started",
+    "XDG_SESSION_DESKTOP": "ubuntu",
+    "LOGNAME": "dell",
+    "COMPIZ_BIN_PATH": "/usr/bin/",
+    "QT4_IM_MODULE": "xim",
+    "XDG_DATA_DIRS": "/usr/share/ubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop:/var/lib/snapd/desktop",
+    "DBUS_SESSION_BUS_ADDRESS": "unix:abstract=/tmp/dbus-84Lh2jTJ6E",
+    "NVM_BIN": "/home/dell/.nvm/versions/node/v11.9.0/bin",
+    "LESSOPEN": "| /usr/bin/lesspipe %s",
+    "NVM_IOJS_ORG_MIRROR": "https://iojs.org/dist",
+    "INSTANCE": "",
+    "UPSTART_JOB": "unity7",
+    "XDG_RUNTIME_DIR": "/run/user/1001",
+    "DISPLAY": ":0",
+    "XDG_CURRENT_DESKTOP": "Unity",
+    "GTK_IM_MODULE": "ibus",
+    "LESSCLOSE": "/usr/bin/lesspipe %s %s",
+    "XAUTHORITY": "/home/dell/.Xauthority",
+    "OLDPWD": "/home/dell",
+    "_": "/home/dell/.nvm/versions/node/v11.9.0/bin/ng"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": 65536,
+      "hard": 65536
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 1048576,
+      "hard": 1048576
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 78650,
+      "hard": 78650
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "/lib/x86_64-linux-gnu/libdl.so.2",
+    "/lib/x86_64-linux-gnu/librt.so.1",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "/lib/x86_64-linux-gnu/libm.so.6",
+    "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "/lib/x86_64-linux-gnu/libpthread.so.0",
+    "/lib/x86_64-linux-gnu/libc.so.6",
+    "/lib64/ld-linux-x86-64.so.2",
+    "/lib/x86_64-linux-gnu/libnss_files.so.2",
+    "/var/torinit/trea365/TreaFrontend2.0/node_modules/node-sass/vendor/linux-x64-67/binding.node"
+  ]
+}

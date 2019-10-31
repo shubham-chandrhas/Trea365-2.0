@@ -1,0 +1,433 @@
+
+<div class="qutationreviewWrap">
+	<h1 class="pageTitle">Quotation Information Review</h1>
+
+	<div class="selSection">
+		<div class="quotationreviewDetails">
+			
+			<h3 class="detailsHeading">Client</h3>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Client Name</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.client_name}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Work Location</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.location}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Billing Address</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.client_billing_location}}</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="col-sm-6">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Name</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.contact_name}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Email</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.email_id}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Phone Number</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.clientDetails.phone_no ? util.maskPhoneNumber(quotationDetails.clientDetails.phone_no) : '' }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+        <div class="scheduleDetails" *ngIf="scheduleWithoutDetails">
+                <h3 class="detailsHeading">Schedule </h3>
+                <span>Not Known</span>
+        </div>
+		<div class="scheduleDetails" *ngIf="quotationDetails.scheduleDetails">
+			<h3 class="detailsHeading">Schedule</h3>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Start Date</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{util.getFormatedDate(quotationDetails.scheduleDetails.start_date)}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">Start Time</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.scheduleDetails.start_time}} {{quotationDetails.scheduleDetails.start_time_format}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">End Date</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{util.getFormatedDate(quotationDetails.scheduleDetails.end_date)}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="label-col">End Time</div>
+						</div>
+						<div class="col-sm-8">
+							<div class="info-col">{{quotationDetails.scheduleDetails.end_time}} {{quotationDetails.scheduleDetails.end_time_format}}</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+		<div class="inspectionDetails" *ngIf="quotationDetails.siteInspection">
+			<h4 class="detailsHeading">Site Inspection</h4>
+			<div class="row infoWrap">
+				<div class="col-sm-8">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="label-col">Date</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="info-col">{{util.getFormatedDate(quotationDetails.siteInspection.inspection_date)}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="label-col">Time</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="info-col">{{quotationDetails.siteInspection.start_time}} {{quotationDetails.siteInspection.start_time_format}}-{{quotationDetails.siteInspection.end_time}} {{quotationDetails.siteInspection.end_time_format}}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="label-col">Inspector</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="info-col">{{quotationDetails.siteInspection.inspector_name}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+		<div class="reqDescWrap">
+			<h3 class="detailsHeading" *ngIf="quotationDetails.clientDetails.requirements">Requirements</h3>
+			<div class="description">
+					{{quotationDetails.clientDetails.requirements ? quotationDetails.clientDetails.requirements : '' }}
+			</div>
+            <h3 class="detailsHeading" *ngIf="quotationDetails.images && quotationDetails.images.length > 0">Images</h3>
+			<div class="row">
+				<div class="col-sm-3" *ngFor="let indx=index; let item of quotationDetails.images;">
+					<div class="previewImg">
+						<img [src]="item.attachment_path" class="img-responsive" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+
+		<div class="servicesDetails" *ngIf="quotationDetails.servicesDetails.services.length > 0" >
+				<!-- <h4 class="detailsHeading">Services</h4> -->
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="500">Service</th>
+							<th class="text-right" width="150">Cost</th>
+							<th class="text-right" width="150">Quantity</th>
+							<th class="text-right" width="200">Amount</th>
+                            
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let service of quotationDetails.servicesDetails.services">
+                            <ng-container *ngIf="service.is_delete == 0">
+                                <td >{{service.service_definition}}<div class="custom-size" *ngIf="service.details!=''" >{{service.details}}</div></td>
+                                <td class="text-right" >{{service.cost | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                <td class="text-right" >{{service.quantity | number: "1.2-2"}}</td>
+                                <td class="text-right" >{{service.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                
+                            </ng-container>
+						</tr>
+						
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan=3 style="text-align: right">
+								Services Subtotal
+							</td>
+							<td class="text-right">
+								<span *ngIf="quotationDetails.servicesDetails.services.length > 0">{{quotationDetails.paymentScheduleDetails.cost_of_service | currency: util.getCurrency() :'symbol-narrow'}}</span>
+                            </td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+		<div class="materialsDetails" *ngIf="quotationDetails.materialsDetails.materials.length > 0">
+				<!-- <h4 class="detailsHeading">Products / Materials</h4> -->
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th width="500">Product / Material</th>
+							<th class="text-right" width="150">Cost</th>
+							<th class="text-right" width="150">Quantity</th>
+							<th class="text-right" width="200">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let material of quotationDetails.materialsDetails.materials" >
+                            <ng-container *ngIf="material.is_delete == 0">
+                                <td >{{material.item_definition_name}}</td>
+                                <td class="text-right" >{{material.cost | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                <td class="text-right" >{{material.quantity | number: "1.2-2"}} {{material.uom}}</td>
+                                <td class="text-right" >{{material.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                
+							</ng-container>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan=3 style="text-align: right">
+								Products & Materials Subtotal
+							</td>
+							<td class="text-right">
+									<span *ngIf="quotationDetails.materialsDetails.materials.length > 0"> {{quotationDetails.paymentScheduleDetails.cost_of_material | currency: util.getCurrency() :'symbol-narrow'}}</span>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+
+		<div class="paymentsDetails">
+			<div class="costCalculate">
+				<div class="row">
+
+
+
+                    <div class="col-sm-6">
+                            <h3 class="detailsHeading">Payment Schedule:
+                               <span class="font-normal"   *ngIf="quotationDetails.paymentScheduleDetails.scheduleType == 'due'">
+                                 Net {{quotationDetails.paymentScheduleDetails.paymentTerm}} days </span></h3>
+        <div class="form-group cutom-margin-top" *ngIf="quotationDetails.paymentScheduleDetails.scheduleType == 'custom'">
+
+						<h4 class="detailsHeading">Payment Schedule:</h4>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th class="text-right">Amount Due</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let item of quotationDetails.paymentScheduleDetails.date_items">
+                                        <ng-container *ngIf="item.is_delete == 0">
+										<td>{{util.getFormatedDate(item.payment_date)}}</td>
+										<td class="text-right">{{item.amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                        </ng-container>
+									</tr>
+								</tbody>
+								<tfoot>
+
+									<tr>
+										<td><div class="label-col" class="custom-padding">Total Amount Scheduled</div></td>
+										<td class="text-right"><strong>{{totalScheduledPay | currency: util.getCurrency() :'symbol-narrow'}}</strong></td>
+									</tr>
+									
+									<tr *ngIf="remainingPayment > 0">
+										<td><div class="label-col" class="custom-padding">Remaining Amount</div></td>
+										<td class="text-right"><strong>{{remainingPayment | currency: util.getCurrency() :'symbol-narrow'}}</strong></td>
+									</tr>
+
+								</tfoot>
+							</table>
+						</div>
+						</div>
+                    </div>
+                    <div class="col-sm-6">
+			<h3 class="detailsHeading">Fees</h3>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">Cost of Services </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right">{{quotationDetails.paymentScheduleDetails.cost_of_service | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">Cost of Materials</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right">{{quotationDetails.paymentScheduleDetails.cost_of_material | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">
+                                        <div class="text-rigth">Subtotal</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right"><strong>{{quotationDetails.paymentScheduleDetails.subtotal | currency: util.getCurrency() :'symbol-narrow'}}</strong></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">Shipping & Handling</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right">{{quotationDetails.paymentScheduleDetails.shipping_handling | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">Adjustment (+/-)</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right">{{quotationDetails.paymentScheduleDetails.adjustment | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">Tax @ <span> {{quotationDetails.paymentScheduleDetails.taxes}}%</span></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="info-col text-right">{{quotationDetails.paymentScheduleDetails.tax_amount | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="label-col">
+                                        <div class="text-rigth">Total Ammount Due</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    
+                                    <div class="info-col text-right"><strong>{{quotationDetails.paymentScheduleDetails.total_cost | currency: util.getCurrency() :'symbol-narrow'}}</strong></div>
+                               
+                                </div>
+                            </div>
+                        </div>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="inspectionDetails" *ngIf="PEService.siteInspection">
+			
+            <h4 class="detailsHeading">Site Inspection</h4>
+			<div class="row infoWrap">
+				<div class="col-sm-8">
+					
+					<div *ngIf="PEService.siteInspection">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="label-col">Site Inspection</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="info-col">Yes</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="label-col">Date</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="info-col">{{util.getFormatedDate(PEService.siteInspection.inspection_date)}}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="label-col">Time</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="info-col">{{PEService.siteInspection.start_time}} {{PEService.siteInspection.start_time_format}}-{{PEService.siteInspection.end_time}} {{PEService.siteInspection.end_time_format}}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="label-col">Inspector</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="info-col">{{PEService.siteInspection.inspector_details.first_name}} {{PEService.siteInspection.inspector_details.last_name}}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    <div class="button-row clearfix">
+      <button class="trea-btn " mat-raised-button  id="downloadPDF" (click)="downloadPDF()">
+          Download as PDF
+      </button>
+      <button
+        class="trea-btn" mat-raised-button id="previewBtn" (click)="previewDoc()">
+        Preview
+      </button>
+    </div>
+		<!-- <div class="button-row">
+			<button mat-raised-button class="trea-btn" (click)="showSiteInspectionPopup()">Schedule Site Inspection</button>
+			<button mat-raised-button class="trea-btn" (click)="showSaveForFollowUpPopup()">Save for follow up...</button>
+        </div> -->
+
+		<div class="errMsgCon" *ngIf="isError">
+			<small>{{errMsg}}</small>
+        </div>
+
+		<div class="button-row clearfix">
+      <button mat-raised-button class="trea-btn" (click)="editQuotation(quotationDetails.project_estimate_id)">Edit</button>
+      <button mat-raised-button class="trea-btn" id="saveAsDraft" (click)="saveAsDraft()">Save</button>
+      
+      <button id="pe-approve" mat-raised-button canAccess="quotation_approve" (click)="showConfirmation()" class="trea-btn">Approve</button>
+      
+      <button id="pe-send-quote" mat-raised-button (click)="sendQuote()" class="trea-btn">Send To Client</button>
+      <button mat-raised-button class="trea-btn" routerLink="/workflow/quote/csa/quotation-list/0" (click)="cancelPE()">Cancel</button>
+    </div>
+
+	</div>
+</div>
+
+
+
+

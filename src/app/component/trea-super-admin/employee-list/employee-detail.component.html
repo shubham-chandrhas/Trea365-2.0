@@ -1,0 +1,222 @@
+<div class="emp-section">
+  <h1 class="pageTitle">Employees <span *ngIf="loggedInUser.role_id == '1'">(Users)</span></h1>
+  <p class="page-summary">
+    Regular staff on payroll employed by the company.
+    <span class="page-summary" *ngIf="loggedInUser.role_id == '1'">(Counted as registered users within the TREA365 web
+      platform.</span>
+  </p>
+  <div class="head-row clearfix">
+    <div class="search-section">
+      <div class="input-group">
+        <span class="search-icn" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+        <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.searchList"
+          (ngModelChange)="getSearchTxt(pageData.searchList)" placeholder="" aria-label=""
+          aria-describedby="basic-addon1">
+        <button mat-raised-button class="client-btn" (click)="pageData.searchTxt = pageData.searchList"
+          type="button">Search</button>
+      </div>
+    </div>
+
+    <div class="page-top-buttons">
+      <div>
+        <div class="dropdown">
+          <button mat-raised-button class="client-btn dropdown-toggle" type="button"
+            data-toggle="dropdown">Export</button>
+          <ul class="dropdown-menu export-emp-dd">
+            <li><a href="javascript:void(0)" mat-raised-button class="client-btn" (click)="exportEmpAsPdf()">Export as
+                PDF</a></li>
+            <!-- <li><a href="javascript:void(0)" mat-raised-button class="client-btn" (click)="exportEmpAsCSV()">Export as
+                CSV</a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="trea-data-table table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="300">
+            <div class="table-hdr">
+              <div>
+                <span>Name</span>
+                <span
+                  (click)="pageData.sortColumnType='A';pageData.sortColumn = 'name';pageData.sortOrder = pageData.sortColumn === 'name' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                  <i [ngClass]=" pageData.sortColumn == 'name' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                    class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.nameSearch"
+                  placeholder="" aria-label="" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </th>
+          <th width="300" *ngIf="loggedInUser.role_id != '1'">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Title</span>
+                <span
+                  (click)="pageData.sortColumnType='A';pageData.sortColumn = 'title';pageData.sortOrder = pageData.sortColumn === 'title' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                  <i [ngClass]=" pageData.sortColumn == 'title' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                    class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.titleSearch"
+                  placeholder="" aria-label="" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Access Role</span>
+                <span
+                  (click)="pageData.sortColumnType='A';pageData.sortColumn = 'role_name';pageData.sortOrder = pageData.sortColumn === 'role_name' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                  <i [ngClass]=" pageData.sortColumn == 'role_name' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                    class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.permissionSearch"
+                  placeholder="" aria-label="" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Email</span>
+                <span
+                  (click)="pageData.sortColumnType='A';pageData.sortColumn = 'email_id';pageData.sortOrder = pageData.sortColumn === 'email_id' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                  <i [ngClass]=" pageData.sortColumn == 'email_id' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                    class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.emailSearch"
+                  placeholder="" aria-label="" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </th>
+          <!-- TODO: after permission module -->
+          <!-- <th width="300" *ngIf="loggedInUser.role_id == '1'">
+                        <div class="bdr-left table-hdr">
+                            <div>
+                                <span>Access Status</span>
+                                <span (click)="pageData.sortColumnType='A';pageData.sortColumn = 'permission_role_name';pageData.sortOrder = pageData.sortColumn === 'permission_role_name' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                    <i [ngClass]=" pageData.sortColumn == 'permission_role_name' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <input autocomplete="nope" type="text" class="form-control" [(ngModel)]="pageData.accessSearch" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                    </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let indx = index; let emp of pageData.empList | sortBy:pageData.sortColumn:pageData.sortOrder:pageData.sortColumnType | searchfilter:pageData.nameSearch:'first_name' |  searchfilter:pageData.permissionSearch:'role_name' | searchfilter:pageData.emailSearch:'email_id' | searchfilter:pageData.searchTxt:'first_name,role_name,email_id' | listLengthfilter | paginate: pageData.paginationKey"
+          [ngClass]="pageData.selectedIndex == indx ? 'sel-row-highlight' : ''"
+          (click)="pageData.selectedIndex = indx;getSelectedEmp(emp, indx);">
+          <td>{{emp.first_name}}<span class="dn">{{ indx == 0 ? updateCount(emp.count) : ''}}</span></td>
+          <td>{{emp.role_name}}</td>
+          <td><a href="javascript:void(0)" class="email">{{emp.email_id}}</a></td>
+          <!-- TODO: after permission module -->
+          <!-- <td *ngIf="loggedInUser.role_id == '1'">{{emp.permission_role_name}}</td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="treaPagination" *ngIf="pageData.empList.length != 0 && constant.ITEM_COUNT != 0">
+    <div class="pull-right">
+      <span> {{1+(pageData.paginationKey.currentPage-1)*pageData.paginationKey.itemsPerPage}} -
+        {{(pageData.paginationKey.itemsPerPage <= pageData.listCount) && (pageData.paginationKey.itemsPerPage+(pageData.paginationKey.currentPage-1)*pageData.paginationKey.itemsPerPage <= pageData.listCount) ? pageData.paginationKey.itemsPerPage+(pageData.paginationKey.currentPage-1)*pageData.paginationKey.itemsPerPage : pageData.listCount}}</span><span>
+        of {{pageData.listCount}} items</span>
+    </div>
+    <div class="pull-right">
+      <select [(ngModel)]="pageData.paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+        <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo"> {{pageNo}} </option>
+      </select>
+      <span> items per page</span>
+    </div>
+    <div class="pull-right">
+      <pagination-controls (pageChange)="util.changePage($event, pageData.paginationKey)" directionLinks="true"
+        autoHide="false" previousLabel="Pre" nextLabel="Next" screenReaderPaginationLabel="Pagination"
+        screenReaderPageLabel="page" screenReaderCurrentLabel="You're on page">
+      </pagination-controls>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+
+  <!-- Selected Employee -->
+  <div id="empMark" class="sel-emp-con" *ngIf="pageData.selectedEmp">
+    <h2 class="selectedTitle">{{pageData.selectedEmp.first_name}} {{pageData.selectedEmp.last_name}}</h2>
+
+    <div class="sel-emp">
+      <div class="pull-right editButton">
+        <div class="add-client add-field addEmpBtnWrap">
+          <div class="dropdown">
+            <button mat-raised-button class="client-btn dropdown-toggle" type="button" data-toggle="dropdown"
+              type="button">Edit</button>
+            <ul class="dropdown-menu">
+              <li><a id="delete-btn" href="javascript:void(0)" mat-raised-button class="client-btn"
+                  (click)="deleteEmployee()">Delete</a></li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detailsWrap">
+      <h3 class="detailsHeading">Account Details</h3>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="label-col">Username</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="info-col">{{pageData.selectedEmp.username}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="label-col">Access Role</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="info-col">{{pageData.selectedEmp.role_name}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <a *ngIf="util.getRole() == 1 || util.getRole() == 2" href="javascript:void(0)" mat-raised-button
+            class="client-btn" (click)="resetPassword()">Reset Password</a>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div>
+    </div>
+  </div>
+  <table id="empTbl" class="dn">
+    <tr>
+      <th>Name</th>
+      <th>Access Role</th>
+      <th>Email</th>
+    </tr>
+    <tr *ngFor="let indx = index; let emp of pageData.empList">
+      <td>{{emp.first_name}}</td>
+      <td>{{emp.role_name}}</td>
+      <td>{{emp.email_id}}</td>
+
+    </tr>
+  </table>

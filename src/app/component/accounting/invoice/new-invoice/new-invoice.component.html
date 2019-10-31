@@ -1,0 +1,136 @@
+<div class="dialog dailogContainer">
+    <!-- <span class="close-icon" (click)="closeDialog()">
+        <img src="assets/icon/close_icon.png" />
+    </span> -->
+    <div class="dialog-hdr">
+        <div>Quotations</div>
+    </div>
+    <div class="">
+        <div class="trea-data-table table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="400">
+                            <div class="table-hdr">
+                                <div>
+                                    <span>Quote No.</span>
+                                    <span (click)="pageData.sortColumn = 'project_estimate_no';pageData.sortColumnType = 'N';pageData.sortOrder = pageData.sortColumn === 'project_estimate_no' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                        <i [ngClass]=" pageData.sortColumn == 'project_estimate_no' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                                <div>
+                                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" [(ngModel)]="quoteNoSearch">
+                                </div>
+                            </div>
+                        </th>
+                        <th width="400">
+                            <div class="bdr-left table-hdr">
+                                <div>
+                                    <span>Date</span>
+                                    <span (click)="pageData.sortColumn = 'project_estimate_date';pageData.sortColumnType = 'A';pageData.sortOrder = pageData.sortColumn === 'project_estimate_date' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                        <i [ngClass]=" pageData.sortColumn == 'project_estimate_date' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                                <div>
+                                    <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" [(ngModel)]="dateSearch">
+                                </div>
+                            </div>
+                        </th>
+                        <th width="400">
+                            <div class="bdr-left table-hdr">
+                                <div>
+                                    <span>Status</span>
+                                    <span (click)="pageData.sortColumn = 'status';pageData.sortColumnType = 'A';pageData.sortOrder = pageData.sortColumn === 'status' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                        <i [ngClass]=" pageData.sortColumn == 'status' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                                <div>
+                                    <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" [(ngModel)]="statusSearch">
+                                </div>
+                            </div>
+                        </th>
+                        <th width="400">
+                            <div class="bdr-left table-hdr">
+                                <div>
+                                    <span>Client</span>
+                                    <span (click)="pageData.sortColumn = 'client';pageData.sortColumnType = 'A';pageData.sortOrder = pageData.sortColumn === 'client' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                        <i [ngClass]=" pageData.sortColumn == 'client' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                                <div>
+                                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" [(ngModel)]="clientSearch">
+                                </div>
+                            </div>
+                        </th>
+                        <th width="400">
+                            <div class="bdr-left table-hdr">
+                                <div>
+                                    <span>Followed by</span>
+                                    <span (click)="pageData.sortColumn = 'followed_by';pageData.sortColumnType = 'A';pageData.sortOrder = pageData.sortColumn === 'followed_by' ? pageData.sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'">
+                                        <i [ngClass]=" pageData.sortColumn == 'followed_by' && pageData.sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' " class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                                <div>
+                                <input autocomplete="nope" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" [(ngModel)]="followedBySearch">
+                                </div>
+                            </div>
+                        </th>
+                        <th width="400" canAccess="invoice_create">
+                            <div class="bdr-left table-hdr">
+                                <div >
+                                    <span>Actions</span>
+                                </div>
+                            </div>
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- (click)="getSelectedQuotation(quote, indx)" -->
+                    <tr *ngFor="let indx=index ;let quote of pageData.quotationList | sortBy:pageData.sortColumn:pageData.sortOrder:pageData.sortColumnType | searchfilter:statusSearch:'status' | searchfilter:dateSearch:'project_estimate_date' | searchfilter:clientSearch:'client' | searchfilter:quoteNoSearch:'project_estimate_no' | searchfilter:followedBySearch:'followed_by' | listLengthfilter | paginate: paginationKey"   [ngClass]="selectedIndex == indx ? 'sel-row-highlight' : ''">
+                        <td>{{quote.project_estimate_no}}</td>
+                        <td>{{util.getFormatedDate(quote.project_estimate_date)}}<!-- <span class="dn">{{updateCount(quote.count)}}</span> --></td>
+                        <td>{{quote.status}}</td>
+                        <td>{{quote.client}}</td>
+                        <td>{{quote.followed_by}}</td>
+                        <td class="table-buttons text-center">
+                            <button canAccess="invoice_create" mat-raised-button class="trea-btn" (click)="select(quote, indx)" type="button">Create</button>
+                            <!-- <button *ngIf="util.getRole() == 2" mat-raised-button class="trea-btn" (click)="review(quote, indx)">Review</button> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="treaPagination" *ngIf="pageData.quotationList.length != 0 && constant.ITEM_COUNT != 0">
+            <div class="pull-right">
+                <span> {{1+(paginationKey.currentPage-1)*paginationKey.itemsPerPage}} - {{(paginationKey.itemsPerPage <= listCount) && (paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage <= listCount) ? paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage : listCount}}</span><span> of {{listCount}} items</span>
+            </div>
+            <div class="pull-right">
+                <select [(ngModel)]="paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+                    <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo"> {{pageNo}} </option>
+                </select>
+                <span> items per page</span>
+            </div>
+            <div class="pull-right">
+                <pagination-controls
+                    (pageChange)="changePage($event)"
+                    directionLinks="true"
+                    autoHide="false"
+                    previousLabel="Pre"
+                    nextLabel="Next"
+                    screenReaderPaginationLabel="Pagination"
+                    screenReaderPageLabel="page"
+                    screenReaderCurrentLabel="You're on page">
+                </pagination-controls>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="errMsgCon" *ngIf="pageData.isError">
+        <small>{{pageData.errMsg}}</small>
+    </div>
+    <div class="clearfix"></div>
+</div>

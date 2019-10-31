@@ -1,0 +1,524 @@
+
+<div class="clearfix"></div>
+<div class="invoiceSection" *ngIf="isLoaded">
+
+    <div class="pageTitle">New Invoice</div>
+
+    <!-- Form Open -->
+    <form autocomplete="off" role="form" [formGroup]="invoiceForm">
+
+        <!-- Invoice Heading Section -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="media mar-lf-2">
+                    <div class="media-left" style="display: block">
+                        <img class="media-object imgwd70" src="{{ util.getCompanyLogo() }}">
+                    </div>
+                    <div class="media-body text-overflow">
+                        <h4 class="media-heading">{{ util.getCompanyName() }}</h4>
+                        {{ util.getCompanyAddress() }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th class="text-right">Date</th>
+                        <td>{{util.getFormatedDate(quotationDetails.project_estimate_date)}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Quotation No.</th>
+                        <td>
+                            <a href="javascript:void(0)" class="email"
+                            [routerLink]="['/workflow/quote/csa/quotation-list/', quotationDetails.project_estimate_id]">
+                            {{quotationDetails.project_estimate_no}}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Client</th>
+                        <td>{{quotationDetails.client_name}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" for="email_id">Email</th>
+                        <td>
+                            <div class="form-group">
+
+                                <input autocomplete="off" type="email" formControlName="client_email" name="client_email"  id="client_email" class="form-control">
+                               <span class="error-msg" *ngIf="invoiceForm.get('client_email').invalid">
+                                    <small *ngIf="invoiceForm.get('client_email').errors.required">The email is required</small>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- /Invoice Heading section -->
+
+        <!-- Billing & Work Location -->
+        <div class="row">
+
+            <div class="col-lg-12">
+                <div class="col-lg-6 invoice-header-table">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Billing Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ quotationDetails.client_billing_location }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-lg-6 invoice-header-table" *ngIf="quotationDetails.client_work_location">
+
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th class="text-center">Work Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ quotationDetails.client_work_location }}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- /Billing & Work Location -->
+
+        <!-- Upper Info -->
+        <div class="invoice-header-table">
+
+            <table class="table table-bordered" width="100%">
+
+                <thead>
+                    <tr>
+                        <th>Mid Section</th>
+                        <th>WO#</th>
+                        <th>Customer PO#</th>
+                        <th>Payment Term</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" formControlName="invoice_midsection">
+                        </td>
+                        <td>
+                            <ng-container *ngIf="quotationDetails.work_orders.length > 0">
+                                <span *ngFor="let workorder of quotationDetails.work_orders; let lastIndex = last;">
+                                    <a href="javascript:void(0)" class="email" [routerLink]="['/workflow/wo/csa/work-order-list/', workorder.work_order_id]">
+                                        {{workorder.work_order_no}}
+                                    </a>
+                                    <ng-container *ngIf="!lastIndex">,</ng-container>
+                                </span>
+                            </ng-container>
+                        </td>
+                        <td>
+                            <input type="text" formControlName="po_nos">
+                        </td>
+                        <td>
+
+                            <div class="input-group" (click)="picker.open()">
+
+                                <input autocomplete="nope" type="text"  formControlName="due_date" [matDatepicker]="picker" [min]="minDate" readonly="true" describedby="addon_due_date">
+
+                                <span class="input-group-addon" id="addon_due_date"><img class="date_icon" src="assets/icon/date_picker.png">
+                                </span>
+
+                            </div>
+
+                            <mat-datepicker #picker ></mat-datepicker>
+
+                            <div class="error-msg" *ngIf="invoiceForm.get('due_date').invalid && (invoiceForm.get('due_date').dirty || invoiceForm.get('due_date').touched || submitted || submittedPartialDate)">
+                                <small *ngIf="invoiceForm.get('due_date').errors.required">Date is required.</small>
+                                <small *ngIf="invoiceForm.get('due_date').errors.min">Please enter upcoming date.</small>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+        <!-- /Upper Info -->
+
+        <!-- Service & Material Section  -->
+
+        <div class="invoice-table-container">
+
+            <div class="table-responsive">
+
+                <table class="table table-border" width="100%">
+
+                    <thead>
+                        <tr>
+                            <th colspan="2">Services and Materials</th>
+                            <th width="20%">Cost ( {{ util.getCurrencySign() }} ) </th>
+                            <th width="20%">Invoice Quantity</th>
+                            <th width="20%">Invoice Amount</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <ng-container *ngIf="hasDataOf('services')">
+
+                            <tr *ngFor="let service of invoiceForm.get('services').controls; let i = index;"
+                            [formGroup]="service">
+                                <td width="1%">  <img src="assets/icon/close_icon.png" (click)="removeRow(1, i)" style="cursor: pointer;"> </td>
+                                <td>
+
+                                    <div>
+                                    {{ service.get('service_definition')?.value }}
+                                    </div>
+                                    <ng-container *ngIf="service.get('details')?.value">
+                                     <strong><small>Description : </small></strong>
+                                        {{ service.get('details')?.value }}
+                                    </ng-container>
+                                </td>
+
+                                <td>
+                                    <input autocomplete="off" type="text"
+                                        name="cost{{i}}"
+                                        formControlName="cost"
+                                        (input)="calculateInvAmt(i)" />
+
+                                    <div class="error-msg" *ngIf="service.get('cost').invalid && (service.get('cost').dirty || service.get('quantity').touched)">
+
+                                        <small *ngIf="service.get('cost').errors.required">Cost is required.</small>
+
+                                        <small *ngIf="service.get('cost').errors.min">Minimum {{ service.get('cost')?.getError('min')?.min }}.</small>
+
+                                        <small *ngIf="service.get('cost').errors.pattern">Invalid Cost.</small>
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    <div class="input-group">
+                                        <input autocomplete="off" type="text"
+                                            name="quantity{{i}}"
+                                            formControlName="quantity"
+                                            (input)="calculateInvAmt(i)" />
+                                    </div>
+                                    <div class="error-msg" *ngIf="service.get('quantity').invalid && (service.get('quantity').dirty || service.get('quantity').touched)">
+                                            <small *ngIf="service.get('quantity').errors.required">Quantity is required.</small>
+
+                                            <small *ngIf="service.get('quantity').errors.min">Minimum {{ service.get('quantity')?.getError('min')?.min }}.</small>
+
+                                            <small *ngIf="service.get('quantity').errors.pattern">Invalid Quantity.</small>
+
+                                        </div>
+                                </td>
+
+                                <td>
+                                    {{service.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}
+                                </td>
+                            </tr>
+
+                        </ng-container>
+
+                        <ng-container *ngIf="hasDataOf('product_materials')">
+
+                            <tr *ngFor="let materialItem of invoiceForm.get('product_materials').controls; let i = index;"
+                            [formGroup]="materialItem">
+                                <td width="1%">
+                                    <img src="assets/icon/close_icon.png" (click)="removeRow(2,i)" style="cursor: pointer;">
+                                </td>
+                                <td>
+                                    <div>{{ materialItem.get('item_definition_name')?.value }}</div>
+                                    <ng-container *ngIf="materialItem.get('details')?.value">
+                                        <strong><small>Description : </small></strong>
+                                        {{ materialItem.get('details')?.value }}
+                                    </ng-container>
+                                </td>
+
+                                <td>
+
+                                    <input autocomplete="off" type="text"
+                                        name="m_cost{{i}}"
+                                        formControlName="cost"
+                                        (input)="calculateMaterialInvAmt(i)" />
+
+
+                                    <div class="error-msg" *ngIf="materialItem.get('cost').invalid && (materialItem.get('cost').dirty || materialItem.get('cost').touched)">
+
+                                        <small *ngIf="materialItem.get('cost').errors.required">Cost is required.</small>
+
+                                        <small *ngIf="materialItem.get('cost').errors.pattern">Invalid Cost.</small>
+
+                                        <small *ngIf="materialItem.get('cost').errors.min">Minimum {{ materialItem.get('cost')?.getError('min')?.min }}.</small>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    <div class="input-group">
+                                     <input autocomplete="off" type="text"
+                                        name="m_quantity{{i}}"
+                                        formControlName="quantity"
+                                        (input)="calculateMaterialInvAmt(i)" />
+                                        <ng-container *ngIf="materialItem.get('uom')?.value">
+                                            {{ materialItem.get('uom')?.value }}
+                                        </ng-container>
+                                    </div>
+
+                                    <div class="error-msg" *ngIf="materialItem.get('quantity').invalid && (materialItem.get('quantity').dirty || materialItem.get('quantity').touched)">
+
+                                        <small *ngIf="materialItem.get('quantity').errors.required">Quantity is required.</small>
+
+                                        <small *ngIf="materialItem.get('quantity').errors.min">Minimum {{ materialItem.get('quantity')?.getError('min')?.min }}.</small>
+
+                                        <small *ngIf="materialItem.get('quantity').errors.pattern">Invalid Quantity.</small>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    {{materialItem.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}
+                                </td>
+                            </tr>
+
+                        </ng-container>
+
+                        <ng-container *ngIf="hasDataOf('additional_items')">
+
+                            <tr *ngFor="let additional_item of invoiceForm.get('additional_items').controls; let indxP=index" [formGroup]="additional_item">
+                                <td width="1%">  <img src="assets/icon/close_icon.png" (click)="removeRow(3, indxP)" style="cursor: pointer;"></td>
+                                <td >
+
+                                    <div class="form-group">
+
+                                        <div class="autoCompleteList">
+
+                                            <div class="searchList">
+
+                                                <mat-form-field class="invoice-item">
+
+                                                    <input autocomplete="nope" id=additional_item_{{indxP}} matInput placeholder=""
+                                                        formControlName="name"
+                                                        [matAutocomplete]="servicesAutoComp"
+                                                        (keyup)="validateService($event, additional_item, indxP)">
+
+                                                    <i *ngIf="additional_item.get('name').value" (click)="removeSelectedItem(indxP, 'additional_item_');" class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+
+                                                    <mat-autocomplete #servicesAutoComp="matAutocomplete">
+                                                        <mat-option *ngFor="let optionIndx=index; let item of additional_item.get('dropdownList').value | async" [value]="item.name" (onSelectionChange)="getSelectedService(item, $event, indxP)">
+                                                            <span>{{ item.name }}</span>
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+
+                                                </mat-form-field>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="error-msg" *ngIf="(additional_item.get('name').invalid) && (additional_item.get('name').dirty || additional_item.get('name').touched || submitted)">
+                                            <small *ngIf="additional_item.get('name').errors.required">Please select item from the list.</small>
+                                        </div>
+
+                                        <ng-container *ngIf="additional_item.get('details')?.value">
+                                            <strong><small>Description : </small></strong>
+                                            {{ additional_item.get('details')?.value }}
+                                        </ng-container>
+                                    </div>
+
+                                </td>
+
+                                <td >
+                                    <div >
+                                    <input autocomplete="off"  type="text" name="additional_cost_{{indxP}}" formControlName="cost" (input)="calculateInvAdditionalAmt(indxP)"/>
+                                    <div class="error-msg" *ngIf="additional_item.get('cost').invalid && (additional_item.get('cost').dirty || additional_item.get('cost').touched || submitted)">
+                                        <small *ngIf="additional_item.get('cost').errors.required">Cost is required.</small>
+                                        <small *ngIf="additional_item.get('cost').errors.pattern">Invalid Cost.</small>
+                                    </div>
+                                    </div>
+                                </td>
+
+                                <td>
+
+                                    <div class="input-group">
+                                        <input autocomplete="off" type="text" name="add_material_quantity_{{indxP}}" formControlName="quantity"  (input)="calculateInvAdditionalAmt(indxP)"/>
+
+                                        <ng-container *ngIf="additional_item.get('uom')?.value">
+                                          {{ additional_item.get('uom')?.value }}
+                                        </ng-container>
+                                    </div>
+
+                                    <div class="error-msg" *ngIf="additional_item.get('quantity').invalid && (additional_item.get('quantity').dirty || additional_item.get('quantity').touched || submitted )">
+                                        <small *ngIf="additional_item.get('quantity').errors.required">Quantity is required.</small>
+                                        <small *ngIf="additional_item.get('quantity').errors.pattern">Invalid Quantity.</small>
+                                    </div>
+
+                                </td>
+
+                                <td>{{additional_item.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}</td>
+
+                            </tr>
+
+                        </ng-container>
+
+                        <tr>
+                            <td colspan="6">
+                                <div class="addIcon Mar0">
+
+                                    <label (click)="addNewMaterialRow()" style="cursor: pointer;">
+                                        <img src="assets/icon/icon-add.png"/>
+                                         Add Item
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- /Service & materila Section -->
+
+        <!-- Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+        <div class="payScheduleWrap">
+
+            <div class="row">
+
+                <div class="col-sm-6">
+
+                    <div class="row">
+
+                        <div class="col-sm-12">
+
+                            <ng-container
+                                *ngIf="quotationDetails.payment_schedules.length > 0">
+                                <div class="pull-left"><h4>Payment Schedules</h4></div>
+                                <div class="clearfix"></div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date Due</th>
+                                                <th>Amount Due</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let payment of quotationDetails.payment_schedules; let indx=index;">
+                                                <td>{{util.getFormatedDate(payment.payment_date)}}</td>
+                                                <td>{{payment.amount | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-container>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="commentSection">
+                                <label>Notes</label>
+                                <div class="">
+                                    <textarea class="form-control" formControlName="notes"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="label-col">Subtotal</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col"> {{ invoiceForm.get('subtotal').value | currency: util.getCurrency() :'symbol-narrow' }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col text-right">Shipping and Handling</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col">
+                                <input autocomplete="nope" type="text" formControlName="shipping_and_handling" class="form-control" (keyup)="calculateTotal()" />
+                                <div class="error-msg" *ngIf="invoiceForm.get('shipping_and_handling').invalid && (invoiceForm.get('shipping_and_handling').dirty || invoiceForm.get('shipping_and_handling').touched || submitted)">
+                                    <small *ngIf="invoiceForm.get('shipping_and_handling').errors.required">Shipping and Handling is required.</small>
+                                    <small *ngIf="invoiceForm.get('shipping_and_handling').errors.pattern">Invalid Amount (e.g 54, 78.25).</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col text-right">Adjustment</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col">
+                                <input autocomplete="nope" type="text" formControlName="adjustment" class="form-control" (keyup)="calculateTotal()" />
+                                <div class="error-msg" *ngIf="invoiceForm.get('adjustment').invalid && (invoiceForm.get('adjustment').dirty || invoiceForm.get('adjustment').touched || submitted)">
+                                    <small *ngIf="invoiceForm.get('adjustment').errors.required">Adjustment is required.</small>
+                                    <small *ngIf="invoiceForm.get('adjustment').errors.pattern">Invalid Amount (e.g 54, 78.25).</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col taxes text-right">
+                                <span>Tax @</span>
+                                <input autocomplete="nope" type="text" formControlName="taxes" class="taxInput" (keyup)="calculateTotal()" /> %
+                                <span class="clearfix"></span>
+                                <div class="error-msg" *ngIf="invoiceForm.get('taxes').invalid && (invoiceForm.get('taxes').dirty || invoiceForm.get('taxes').touched || submitted)">
+                                     <small *ngIf="invoiceForm.get('taxes').errors.required">Tax is required.</small>
+
+                                    <small *ngIf="invoiceForm.get('taxes').errors.min || invoiceForm.get('taxes').errors.max || invoiceForm.get('taxes').errors.pattern">Invalid Tax.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col tax-top-8">{{ invoiceForm.get('tax_amount').value | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="label-col">Total Payment Amount </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col font-bold">
+                                {{
+                                    invoiceForm.get('total_payment_amount').value
+                                    | currency: util.getCurrency() :'symbol-narrow'
+                                }}
+                                <div class="error-msg" *ngIf="invoiceForm.get('total_payment_amount').invalid && (invoiceForm.get('total_payment_amount').dirty || invoiceForm.get('total_payment_amount').touched || submitted)">
+
+                                      <small *ngIf="invoiceForm.get('total_payment_amount').errors.min || invoiceForm.get('total_payment_amount').errors.max || tax.errors.pattern">The total payment amount not less than 0.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+
+        <div class="button-row">
+             <!-- routerLink="/account/csa/review-invoice" -->
+            <button type="button" mat-raised-button class="trea-btn" (click)="next(invoiceForm)">Next</button>
+            <button type="button" mat-raised-button class="trea-btn" (click)="cancel()">Cancel </button>
+        </div>
+    </form>
+    <!-- Form Close -->
+     <!-- NOTE: Implements for close dropdown on the fly -->
+    <input type="hidden" id="hiddenInput" placeholder="">
+</div>

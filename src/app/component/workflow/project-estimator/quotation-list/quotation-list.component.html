@@ -1,0 +1,1104 @@
+<div class="inventory-section qutationWrap">
+  <h1 class="pageTitle">Quotations</h1>
+  <p class="page-summary">Project estimates prepared for clients.</p>
+
+  <div class="trea-welcome" *ngIf="QuotationList.length == 0 && onBoarding">
+    <h4>There are no Project Estimates yet.</h4>
+    <p class="textJustified">
+      Create Project Estimate (or Quotes) for all Client projects. Capture details of required work and materials, a
+      potential schedule, and a payment plan. Schedule on-site inspection visits and assign staff to follow up.
+    </p>
+    <p class="textJustified">
+      Quotes will be listed here when an authorized user has created one.
+    </p>
+    <!-- *ngIf="util.getRole() == 2" -->
+    <div class="button-row clearfix" *ngIf="util.canAccess('quotation_create')">
+
+      <button mat-raised-button class="trea-btn" type="button" (click)="addNewQuotation()">
+        Create a Quotation
+      </button>
+
+    </div>
+    <div class="clearfix" *ngIf="!util.canAccess('quotation_create')">
+            <p class="note">Please contact an administrator who can add Quotation</p>
+        </div>          
+  </div>
+  <div class="head-row clearfix" *ngIf="QuotationList.length != 0 " canAccess="quotation_list">
+    <div class="search-section">
+      <div class="input-group">
+        <span class="search-icn" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+        <input autocomplete="nope" type="text" class="form-control" placeholder="" [(ngModel)]="searchList"
+          (keydown.enter)="searchTxt = searchList" (ngModelChange)="getSearchTxt(searchList)" />
+        <button mat-raised-button class="client-btn" (click)="searchTxt = searchList">
+          Search
+        </button>
+      </div>
+    </div>
+    <div class="add-client">
+      <button mat-raised-button class="client-btn" type="button" (click)="addNewQuotation()" canAccess="quotation_create">
+        New Quotation
+      </button>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+
+  <div class="trea-data-table table-responsive" *ngIf="QuotationList.length != 0 " canAccess="quotation_list" >
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>
+            <div class="table-hdr">
+              <div>
+                <span>Date</span>
+                <span (click)="
+                    columnType = 'N';
+                    sortColumn = 'project_estimate_date';
+                    sortOrder =
+                      sortColumn === 'project_estimate_date'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'project_estimate_date' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" [(ngModel)]="dateSearch" />
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Quote No.</span>
+                <span (click)="
+                    columnType = 'N';
+                    sortColumn = 'project_estimate_no';
+                    sortOrder =
+                      sortColumn === 'project_estimate_no'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'project_estimate_no' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                  [(ngModel)]="quoteNoSearch" />
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Client</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'client_name';
+                    sortOrder =
+                      sortColumn === 'client_name'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'client_name' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" [(ngModel)]="clientSearch" />
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Followed by</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'followed_by';
+                    sortOrder =
+                      sortColumn === 'followed_by'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'followed_by' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                  [(ngModel)]="followedBySearch" />
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Inspection</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'inspection';
+                    sortOrder =
+                      sortColumn === 'inspection'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'inspection' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                  [(ngModel)]="inspectionSearch" />
+              </div>
+            </div>
+          </th>
+          <th width="300">
+            <div class="bdr-left table-hdr">
+              <div>
+                <span>Status</span>
+                <span (click)="
+                    columnType = 'A';
+                    sortColumn = 'status';
+                    sortOrder =
+                      sortColumn === 'status'
+                        ? sortOrder === 'ASC'
+                          ? 'DSC'
+                          : 'ASC'
+                        : 'ASC'
+                  ">
+                  <i [ngClass]="
+                      sortColumn == 'status' && sortOrder == 'ASC'
+                        ? 'fa-rotate-90'
+                        : 'fa-rotate-270'
+                    " class="fa fa-signal" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div>
+                <input autocomplete="nope" type="text" class="form-control" placeholder="" [(ngModel)]="statusSearch" />
+              </div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="
+            let indx = index;
+            let quote;
+            of: QuotationList
+              | sortBy: sortColumn:sortOrder:columnType
+              | searchfilter: statusSearch:'status'
+              | searchfilter: dateSearch:'project_estimate_date'
+              | searchfilter: clientSearch:'client_name'
+              | searchfilter: quoteNoSearch:'project_estimate_no'
+              | searchfilter: followedBySearch:'followed_by'
+              | searchfilter: inspectionSearch:'inspection'
+              | searchfilter
+                : searchTxt
+                : 'status,project_estimate_date,client_name,project_estimate_no,followed_by,inspection'
+              | listLengthfilter
+              | paginate: paginationKey
+          " (click)="getSelectedQuotation(quote, indx); clearCR()"
+          [ngClass]="selectedIndex == indx ? 'sel-row-highlight' : ''">
+          <td class="text-center">{{ quote.project_estimate_date }}</td>
+          <td class="text-center">{{ quote.project_estimate_no }}</td>
+          <td class="text-center">{{ quote.client_name }}</td>
+          <td class="text-center">{{ quote.followed_by }}</td>
+          <td class="text-center">{{ quote.inspection }}</td>
+          <td class="text-center">
+            <span class="dn">{{ updateCount(quote.count) }}</span>{{ quote.status }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="treaPagination" *ngIf="QuotationList.length != 0 && constant.ITEM_COUNT != 0 " canAccess="quotation_list">
+    <div class="pull-right">
+      <span>
+        {{ 1 + (paginationKey.currentPage - 1) * paginationKey.itemsPerPage }} -
+        {{
+          paginationKey.itemsPerPage <= listCount &&
+          paginationKey.itemsPerPage +
+            (paginationKey.currentPage - 1) * paginationKey.itemsPerPage <=
+            listCount
+            ? paginationKey.itemsPerPage +
+              (paginationKey.currentPage - 1) * paginationKey.itemsPerPage
+            : listCount
+        }}</span><span> of {{ listCount }} items</span>
+    </div>
+    <div class="pull-right">
+      <select [(ngModel)]="paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+        <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo">
+          {{ pageNo }}
+        </option>
+      </select>
+      <span> items per page</span>
+    </div>
+    <div class="pull-right">
+      <pagination-controls (pageChange)="changePage($event)" directionLinks="true" autoHide="false" previousLabel="Pre"
+        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+        screenReaderCurrentLabel="You're on page">
+      </pagination-controls>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <!-- Selected Quotation -->
+  <div id="qutationMark" class="qutationreviewWrap" *ngIf="selectedQuotation && util.canAccess('quotation_details')">
+    <h2 class="selectedTitle MB15">
+      Quote No. {{ selectedQuotation.project_estimate_no }}
+    </h2>
+
+    <div class="selSection">
+      <div class="quotationreviewDetails">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Version</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  <div class="form-group Mar0">
+                    <select [(ngModel)]="versionlist" class="form-control" (ngModelChange)="setVersion(versionlist)">
+
+                      <option *ngFor="
+                          let i = index;
+                          let version;
+                          of: selectedQuotation.versions
+                        " value="{{ i }}">
+                        <span *ngIf="i != 0">
+                          {{
+                            version
+                              ? util.getFormatedDate(
+                                  util.unixTimestampToLocalDate(
+                                    version.updated_at_unix
+                                  ).localDate
+                                )
+                              : "N/A"
+                          }}
+                          {{ version ? version.generated_by : "" }}
+                        </span>
+                        <span *ngIf="i == 0">Latest</span>
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Status</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{ selectedQuotation.status }}
+
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="selectedQuotation.email_logs">
+              <div class="col-sm-4">
+                <div class="label-col">Email Status</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  Sent On
+                  {{
+                    util.getFormatedDate(
+                      selectedQuotation.email_logs.updated_at
+                    )
+                  }}
+                  to {{ selectedQuotation.email_logs.email_to }}
+                  <button mat-raised-button class="trea-btn" (click)="resendMail(selectedQuotation.email_logs)"
+                    id="resendEmail">
+                    Resend
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Date</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{
+                    util.getFormatedDate(
+                      selectedQuotation.project_estimate_date
+                    )
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Generated by</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{
+                    selectedQuotation.generated_by
+                      ? selectedQuotation.generated_by
+                      : ""
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="servicesDetails">
+          <h4 class="detailsHeading">Version Log</h4>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Managed By</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="
+                    let indx = index;
+                    let version;
+                    of: selectedQuotation.versions | sortBy: 'project_estimate_id':'DSC':'N'
+                  ">
+                  <td>
+                    {{ version.generated_by }}
+                  </td>
+                  <td>{{ version.status }}</td>
+                  <td>
+                    {{
+                      util.getFormatedDate(
+                        util.unixTimestampToLocalDate(version.updated_at_unix)
+                          .localDate
+                      )
+                    }}
+                  </td>
+                  <td>
+                    {{
+                      util.unixTimestampToLocalDate(version.updated_at_unix)
+                        .localDate | date: "hh:mm a"
+                    }}
+                  </td>
+                </tr>
+                <tr *ngIf="versions && versions.length == 0">
+                  <td colspan="5" class="text-center">
+                    No version history available for this quotation.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+
+      <h3 class="detailsHeading">Client</h3>
+      <div class="row MT20">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Client Name</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col">
+                {{
+                  selectedQuotation.client_name
+                    ? selectedQuotation.client_name : ""
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Work Location</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col" *ngIf="selectedQuotation.client_work_location">
+                {{
+                  selectedQuotation.client_work_location
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Billing Address</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col" *ngIf="selectedQuotation.client_billing_location">
+                {{
+                  selectedQuotation.client_billing_location
+                }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Name</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col">
+                {{
+                  selectedQuotation.contact_name
+                    ? selectedQuotation.contact_name
+                    : "N/A"
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Email</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col">
+                {{
+                  selectedQuotation.email_id
+                    ? selectedQuotation.email_id
+                    : "N/A"
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="label-col">Phone Number</div>
+            </div>
+            <div class="col-sm-8">
+              <div class="info-col">
+                {{
+                  selectedQuotation.phone_no
+                    ? selectedQuotation.phone_no
+                    : "N/A"
+                }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <h3 *ngIf="
+          selectedQuotation.schedule && selectedQuotation.schedule.schedule_type == '4' " class="detailsHeading">
+        Schedule
+      </h3>
+      <div class="scheduleDetails"
+        *ngIf="selectedQuotation.schedule && selectedQuotation.schedule.schedule_type == '4'">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="info-col">
+                  Not Known
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 *ngIf="
+        selectedQuotation.schedule && selectedQuotation.schedule.schedule_type != '4'
+        " class="detailsHeading">
+        Schedule
+      </h3>
+      <div class="scheduleDetails" *ngIf="
+        selectedQuotation.schedule && selectedQuotation.schedule.schedule_type != '4'
+        ">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Start Date</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{
+                    util.getFormatedDate(selectedQuotation.schedule.start_date)
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">Start Time</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{ selectedQuotation.schedule.start_time }}
+                  {{ selectedQuotation.schedule.start_time_format }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">End Date</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{
+                    util.getFormatedDate(selectedQuotation.schedule.end_date)
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="label-col">End Time</div>
+              </div>
+              <div class="col-sm-8">
+                <div class="info-col">
+                  {{ selectedQuotation.schedule.end_time }}
+                  {{ selectedQuotation.schedule.end_time_format }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="inspectionDetails" *ngIf="selectedQuotation.site_inspections">
+        <h4 class="detailsHeading">Site Inspection</h4>
+        <div class="row infoWrap">
+          <div class="col-sm-8">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Date</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    util.getFormatedDate(
+                      selectedQuotation.site_inspections.inspection_date
+                    )
+                  }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Time</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{ selectedQuotation.site_inspections.start_time }}
+                  {{ selectedQuotation.site_inspections.start_time_format }} to
+                  {{ selectedQuotation.site_inspections.end_time }}
+                  {{ selectedQuotation.site_inspections.end_time_format }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="label-col">Inspector</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="info-col">
+                  {{
+                    selectedQuotation.site_inspections.inspector_name
+                  }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="reqDescWrap MT20">
+        <h3 class="detailsHeading">Requirements</h3>
+        <div class="description overflowTxt">
+          {{ selectedQuotation.requirements }}
+        </div>
+        <h3 class="detailsHeading" *ngIf="selectedQuotation.images && selectedQuotation.images.length > 0">Images</h3>
+        <div class="row">
+          <div class="col-sm-3" *ngFor="let indx = index; let img; of: selectedQuotation.images">
+            <div class="previewImg">
+              <img src="{{ img.attachment_path }}" class="img-responsive" />
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="selectedQuotation.images && selectedQuotation.images.length == 0"> &nbsp;</div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="servicesDetails" *ngIf="selectedQuotation.services.length > 0">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th width="500">Service</th>
+                <th class="text-right" width="150">Cost</th>
+                <th class="text-right" width="100">Quantity</th>
+                <th class="text-right" width="150">Amount</th>
+                <th width="100">
+                  <!-- Leave empty for alignment -->
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let service of selectedQuotation.services">
+                <td [ngClass]="service.is_approved == 2 ? 'red-text' : ''">
+                  {{
+                    service.service_definition
+                      ? service.service_definition
+                      : service.ad_hoc_service
+                  }}
+                  <div class="custom-size" *ngIf="service.details && service.details!=''">{{service.details}}</div>
+                </td>
+                <td [ngClass]="service.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">
+                    {{
+                      service.cost
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </td>
+                <td [ngClass]="service.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">{{ service.quantity }}</div>
+                </td>
+                <td [ngClass]="service.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">
+                    {{
+                      service.total_amount
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </td>
+
+                <td [ngClass]="service.is_approved == 2 ? 'red-text' : ''">
+                  {{
+                    service.is_approved == 1
+                    ? "(Approved)"
+                        : service.is_approved == 2 ? service.reject_remark ? "(Rejected -"+service.reject_remark+")" : "(Rejected)"
+                      : "(Pending)"
+                  }}
+                </td>
+              </tr>
+
+
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="text-right">
+                  Services Subtotal
+                </td>
+                <td class="text-right">
+                  <span *ngIf="selectedQuotation.costs">
+                    {{
+                      selectedQuotation.costs.cost_of_services
+                      | currency: util.getCurrency():"symbol-narrow"
+                    }}</span>
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+                <td class="text-right">
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="materialsDetails" *ngIf="selectedQuotation.product_materials.length > 0">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th width="500">Product / Material</th>
+                <th class="text-right" width="150">Cost</th>
+                <th class="text-right" width="100">Quantity</th>
+                <th class="text-right" width="150">Amount</th>
+                <th width="100">
+                  <!-- Leave empty for alignment -->
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let material of selectedQuotation.product_materials">
+                <td [ngClass]="material.is_approved == 2 ? 'red-text' : ''">
+                  <div>
+                    {{
+                      material.item_definition_name ? material.item_definition_name : "N/A"
+                    }}
+                  </div>
+                </td>
+                <td [ngClass]="material.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">
+                    {{
+                      material.cost
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </td>
+                <td [ngClass]="material.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">
+                    {{ material.quantity }}
+                    <span class="">&nbsp;{{
+                        material.uom
+                          ? material.uom
+                          : ""
+                      }}</span>
+                  </div>
+                </td>
+                <td [ngClass]="material.is_approved == 2 ? 'red-text' : ''">
+                  <div class="text-right">
+                    {{
+                      material.total_amount
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </td>
+                <td [ngClass]="material.is_approved == 2 ? 'red-text' : ''">
+                  {{
+                    material.is_approved == 1
+                      ? "(Approved)"
+                      : material.is_approved == 2 ? material.reject_remark ? "(Rejected -"+ material.reject_remark +")" : "(Rejected)"
+                      : "(Pending)"
+                  }}
+                </td>
+              </tr>
+
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="text-right">
+                  Products & Materials Subtotal
+                </td>
+                <td class="text-right">
+                  <span *ngIf="selectedQuotation.costs">{{
+                    selectedQuotation.costs.cost_of_materials
+                      | currency: util.getCurrency():"symbol-narrow"
+                  }}</span>
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+                <td class="text-right">
+                </td>
+                <!-- @do not remove these blank td for proper alignment -->
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+      <div class="paymentsDetails">
+        <div class="costCalculate">
+          <div class="row">
+
+            <div class="col-sm-6">
+              <h3 class="detailsHeading">Payment Schedule: <span class="font-normal"
+                  *ngIf="selectedQuotation.payment_schedules.length === 0">Net
+                  {{ selectedQuotation.payment_term }} days</span></h3>
+
+
+              <div class="form-group cutom-margin-top" *ngIf="selectedQuotation.payment_schedules.length !== 0">
+
+                <label class="">Payment Schedule:</label>
+
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th class="text-right">Amount Due</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="
+                    let payment_schedule of selectedQuotation.payment_schedules
+                  ">
+                        <td>
+                          {{
+                      util.getFormatedDate(payment_schedule.payment_date)
+                    }}
+                        </td>
+                        <td class="text-right">
+                          {{
+                      payment_schedule.amount
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                        </td>
+                      </tr>
+                    </tbody>
+
+                  </table>
+                </div>
+              </div>
+              <div class="form-group">
+                <h3 class="detailsHeading">Internal Remarks :</h3>
+                <ng-container *ngIf="selectedQuotation.remarks && selectedQuotation.remarks.length > 0">
+
+                  <p *ngFor="let item of selectedQuotation.remarks">
+                    {{
+                      item.remarks
+                  }}</p>
+                </ng-container>
+                <div class="addIcon">
+                  <span (click)="addRemark()">
+                    <img src="assets/icon/icon-add.png" /><span>Add Remark</span>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group button-row " *ngIf="remarkDiv === 'show'">
+                <textarea name="peRemark" [(ngModel)]="peRemark" id="addRemark" cols="30" rows="4"
+                  class="form-control"></textarea>
+                <button class="trea-btn pull-left" id="save_remark_btn" mat-raised-btn
+                  (click)="saveRemark(peRemark)">Save Remark</button>
+                <button class="trea-btn pull-left" mat-raised-btn (click)="cancelRemark()">Cancel</button>
+              </div>
+
+            </div>
+            <div class="col-sm-6">
+              <!-- <h4 class="detailsHeading">Costs</h4> -->
+              <h3 class="detailsHeading">Fees</h3>
+
+              <div class="row cutom-margin-top">
+                <div class="col-sm-6">
+                  <div class="label-col">Cost of Services</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    {{
+                      selectedQuotation.costs.cost_of_services
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="label-col">Cost of Materials</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    {{
+                      selectedQuotation.costs.cost_of_materials
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="row MB15">
+                <div class="col-sm-6">
+                  <div class="label-col">Subtotal</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    <strong>{{
+                      selectedQuotation.costs.subtotal
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="label-col">Shipping & Handling</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    {{
+                      selectedQuotation.costs.shipping_handling
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="label-col">Adjustment (+/-)</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    {{
+                      selectedQuotation.costs.adjustment
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="label-col">
+                    Tax @ ({{ selectedQuotation.costs.taxes }}%)
+                  </div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    {{
+                      selectedQuotation.costs.tax_amount
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="label-col text-right">Total Amount Due</div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="info-col text-right">
+                    <strong>{{
+                      selectedQuotation.costs.total_cost
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <!-- <div *ngIf="selectedQuotation.invoice_lists.length > 0">
+          <h3 class="detailsHeading">Invoices</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Invoice No.</th>
+                  <th>Date</th>
+                  <th>Amount Due</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let invoice of selectedQuotation.invoice_lists">
+                  <td>
+                    <a
+                      href="javascript:void(0)"
+                      [routerLink]="[
+                        '/account/csa/invoice-list/',
+                        invoice.invoice_id
+                      ]"
+                      >#{{ invoice.invoice_no }}</a
+                    >
+                  </td>
+                  <td>{{ util.getFormatedDate(invoice.invoice_date) }}</td>
+                  <td>
+                    {{
+                      invoice.total_payment_amount
+                        | currency: util.getCurrency():"symbol-narrow"
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="errMsgCon MB20" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="successMsgCon MB20" *ngIf="isSuccess">
+        <small>{{ successMsg }}</small>
+      </div>
+
+      <div class="button-row clearfix">
+        <button class="trea-btn " mat-raised-button (click)="downloadPDF(selectedQuotation.pdfLink)">
+          <!-- <a [href]="selectedQuotation.pdfLink" class="download-pdf"> -->
+          Download as PDF
+          <!-- </a> -->
+        </button>
+        <button class="trea-btn" mat-raised-button (click)="preview(selectedQuotation.preview)">
+          Preview
+        </button>
+      </div>
+      <div class="button-row clearfix" *ngIf="selectedQuotation.status_id != 7">
+        
+        <button *ngIf="
+            selectedQuotation.status_id != 2" mat-raised-button class="trea-btn"
+            canAccess="quotation_create"
+          (click)="editQuotation(selectedQuotation.project_estimate_id)">
+          Edit
+        </button>
+        
+        <button *ngIf="
+            selectedQuotation.status_id != 2 &&
+            selectedQuotation.status_id != 5" canAccess="quotation_create"  mat-raised-button class="trea-btn" (click)="showSaveForFollowUpPopup()">
+          Assign for Follow-Up
+        </button>
+        
+        <button *ngIf="
+            selectedQuotation.status_id != 2 &&
+            selectedQuotation.status_id != 5" canAccess="quotation_inspection" mat-raised-button class="trea-btn" (click)="showSiteInspectionPopup()">
+          Schedule Site Inspection
+        </button>
+       
+        <button *ngIf="
+        selectedQuotation.status_id != 2" mat-raised-button class="trea-btn" canAccess="quotation_create" 
+          (click)="sendQuote(selectedQuotation.project_estimate_id)">
+          {{ selectedQuotation.email_log_id && selectedQuotation.email_log_id !='' ? 'Resend' :  'Send to Client' }}
+        </button>
+       
+        <button *ngIf="
+            ((selectedQuotation.status_id != 2 && selectedQuotation.status_id != 5) ||
+              selectedQuotation.status_id == 4)
+          " id="approveBtn" mat-raised-button class="trea-btn" canAccess="quotation_approve"
+          (click)="approvePE(selectedQuotation.project_estimate_id)">
+          Approve
+        </button>
+        <!-- Create WO -->
+        
+        <button *ngIf="
+            (selectedQuotation.status_id == 2 ||
+              selectedQuotation.status_id == 5 ||
+              selectedQuotation.status_id == 3)" canAccess="wo_create" id="approveBtn" mat-raised-button class="trea-btn"
+          (click)="goToWoSetup(selectedQuotation.project_estimate_id)">
+          Create W/O
+        </button>
+        
+        <button *ngIf="
+            selectedQuotation.status_id != 2 &&
+            selectedQuotation.status_id != 5" mat-raised-button class="trea-btn" canAccess="quotation_create" 
+          (click)="deleteQuotation(selectedQuotation.project_estimate_id)">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

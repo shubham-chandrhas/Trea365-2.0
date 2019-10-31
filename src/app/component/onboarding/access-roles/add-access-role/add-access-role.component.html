@@ -1,0 +1,114 @@
+<div class="addroleWrap">
+  <div class="role-section">
+    <!-- *ngIf="!isEdit" -->
+    <h3 class="pageTitle" *ngIf="!edit">New Role</h3>
+    <h3 class="pageTitle" *ngIf="edit">Edit Role</h3>
+    <div class="clearfix"></div>
+    <div class="newroleWrap">
+      <div class="addUserFormBody">
+        <div class="newroleDetails">
+          <form autocomplete="off" role="form" [formGroup]="addRoleFm">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="row">
+                  <div class="col-xs-4">
+                    <div class="label-col">Role Name</div>
+                  </div>
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                      <input autocomplete="nope" formControlName="role_name" type="text" id="role_name" name="role_name"
+                        placeholder="" class="form-control width95">
+                      <span class="error-msg"
+                        *ngIf="role_name.invalid && (role_name.dirty || role_name.touched || submitted)">
+                        <small *ngIf="role_name.errors.required">Role Name is required.</small>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4">
+                    <div class="label-col">Description</div>
+                  </div>
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                      <textarea formControlName="description" class="form-control width95" name="roleDesc" id="roleDesc"
+                        cols="30" rows="8"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="permissionsObj.length > 0">
+      <div class="dispatchSection pad-top-20">
+        <div class="row">
+          <div class="col-sm-12">
+            <nav class="tabbed-nav MT20">
+              <ul class="tabs-list">
+                <li class="tabs" *ngFor="let tabs  of permissionsObj">
+                  <button [ngClass]="AccessroleTab == tabs.menu_name ? 'act-option' :''"
+                    (click)="changeAccessrolesTab(tabs.menu_name)" mat-raised-button
+                    class="trea-btn setactive">{{tabs.menu_name}}</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div [ngSwitch]="AccessroleTab">
+        <div *ngFor="let tabs  of permissionsObj" class="accesroletree">
+          <div *ngSwitchCase="tabs.menu_name">
+            <div class="accesscontent" *ngIf="tabs.access && tabs.access.length > 0">
+              <h2>Access</h2>
+              <div>
+                <tree-root #tree [nodes]=tabs.access (initialized)="onTreeLoad($event)" [options]="options">
+                  <ng-template #treeNodeTemplate let-node let-index="index">
+                    {{ node.data.status == 0 ? setDisabledValue(true) : ''}}
+                     <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="node.data.status == 1" (change)="onSelect($event,node, 'access')">
+                      {{ node.data.name }}
+                    </label>
+                  </div>
+                  </ng-template>
+                </tree-root>
+                <!-- <tree-root #tree [nodes]=tabs.access (initialized)="onTreeLoad($event)" (select)="onSelect($event)"
+                  (deselect)="onDeselect($event)" [options]="options">
+                </tree-root> -->
+              </div>
+            </div>
+            <div class=" managementcontent">
+              <h2>Management</h2>
+              <tree-root #tree [nodes]=tabs.management (initialized)="onTreeLoad($event)" [options]="options">
+                <ng-template #treeNodeTemplate let-node let-index="index">
+                  <!-- <input type="checkbox" class="tree-checkbox" [checked]="node.data.status == 1" (change)="onSelect($event,node)">
+                  <span [class.title]="true">{{ node.data.name }}</span> -->
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="node.data.status == 1" [disabled]= "isDisabled" (change)="onSelect($event,node, 'management')">
+                      {{ node.data.name }}
+                    </label>
+                  </div>
+                </ng-template>
+              </tree-root>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button-row clearfix">
+        <button mat-raised-button id="add-role-btn" class="trea-btn" type="button"
+          (click)="addRole(addRoleFm)">Submit</button>
+        <button mat-raised-button class="trea-btn" type="button" (click)="backTolist()">Cancel</button>
+      </div>
+    </ng-container>
+    <!-- <div class="col-sm-12">
+			<div class="button-row">
+				<button mat-raised-button class="trea-btn" type="button" (click)="addRole(addRoleFm)">Submit</button>
+				<button mat-raised-button class="trea-btn" type="button">Cancel</button>
+			</div>
+		</div> -->
+  </div>
+</div>

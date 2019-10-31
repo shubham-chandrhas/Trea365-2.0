@@ -1,0 +1,44 @@
+<div class="businessDetails">
+    <div class="pageTitle">Service Type Review</div>
+    <div class="table-responsive MB30">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Service Type</th>
+                    <th>Service Definition</th>
+                    <th>Service Description</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr >
+                    <td>{{businessNatureObj.service_type}}</td>
+                    <td>
+                        <div *ngFor = "let definition of businessNatureObj.service_definitions">
+                            <div *ngIf="definition.is_deleted == 0">{{definition.service_definition}}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngFor = "let ser_desc of businessNatureObj.service_definitions">
+                            <div *ngIf="ser_desc.is_deleted == 0">{{ser_desc.description}}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngFor = "let defPrice of businessNatureObj.service_definitions">
+                            <div *ngIf="defPrice.is_deleted == 0">{{defPrice.price | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="errMsgCon" *ngIf="isError">
+        <small>{{errMsg}}</small>
+    </div>
+    <div class="button-row">
+        <button mat-raised-button class="trea-btn" (click)="goToEditDetails()">Edit</button>
+        <button mat-raised-button *ngIf="action == 'add'" id="addBusiNature" class="trea-btn" (click)="submitDetails()">Submit</button>
+        <button mat-raised-button *ngIf="action == 'edit'" id="addBusiNature" class="trea-btn" (click)="submitDetails()">Update</button>
+        <button mat-raised-button class="trea-btn" (click)="cancelSubmitAction()">Cancel</button>
+    </div>
+</div>

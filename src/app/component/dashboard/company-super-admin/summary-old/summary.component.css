@@ -1,0 +1,383 @@
+
+
+/* .trea-btn {
+    background-color: #00A499;
+    color: #FFFFFF;
+    border-radius: 0px;
+    height: 30px;
+    line-height: 30px;
+    text-decoration: none;
+}
+    .trea-btn:hover {
+    color: #505050;
+    background: #FFCB36;
+} */
+
+
+.txt-red{
+    color: #D0021B;
+}
+.txt-green{
+    color: #00A99D;
+}
+.txt-yellow{
+    color: #FFCB36;
+}
+.bgBlue{
+    background-color: #1e3345;
+}
+.bgGreen{
+    background-color: #00A99D;
+}
+.midText{
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 600;
+    text-align: center;
+}
+.smallTxt{
+    font-size: 12px;
+    text-align: center;
+}
+.img-circle{
+    border-radius: 50%;
+}
+.panelBody{
+    background-color: #F6F6F6;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+.header{
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.header .arrowDown{
+    font-size: 30px;
+    color: #00A99D;
+    margin-right: 15px;
+    vertical-align: sub;
+    cursor: pointer;
+}
+.contentBox{
+    background-color: #FFFFFF;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.amtTxt{
+    font-size: 32px;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 600;
+}
+.pieChart img{
+    margin: 0 auto;
+}
+.assetImg>img{
+    max-width: 120px;
+    margin: 10px auto;
+}
+
+.campaignsWrap ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.campaignsWrap ul li{
+    padding: 12px;
+}
+.campaign{
+    width: 100%;
+}
+.campaign .number{
+    font-size: 36px;
+    text-align: center;
+    /* line-height: 36px; */
+    font-weight: 600;
+    color: #00A99D;
+    vertical-align: super;
+    width: 50px;
+    display: inline-block;
+}
+.campaign .campTxt{
+    font-size: 20px;
+    vertical-align: super;
+    width: calc(100% - 60px);
+    display: inline-block;
+}
+.profilePic{
+    width: 110px;
+    height: 110px;
+    margin: 0 auto;
+}
+.profInfo .name{
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+.profInfo .txtDesc{
+ line-height: 18px;
+ margin-bottom: 15px;
+}
+
+.profitFooter{
+    padding-left: 15px;
+}
+.profitFooter .jobList{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.equipmentDetails span{
+    text-decoration: underline;
+  }
+.equipmentDetails{
+    margin-top: 30px;
+}
+
+  .equipmentTable .table{
+    max-width: 300px;
+    text-align: center;
+    margin: 30px auto;
+  }
+  .equipmentTable .table thead tr th:nth-child(1){
+    border-bottom: 1px solid transparent;
+  }
+  .equipmentTable .table thead tr th{
+    text-align: center;
+    border-bottom: 1px solid #00A499;
+    font-weight: normal;
+
+  }
+  .equipmentTable .table tbody tr td{
+    padding: 27px;
+    border: 1px solid #00A499;
+    font-weight:  700;
+    font-size: 22px;
+  }
+  .equipmentTable .table tbody tr th{
+    vertical-align: middle;
+    font-weight:  700;
+    font-size: 22px;
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    text-align: center;
+  }
+
+.hrWrap .panelBody .contentBox{
+    min-height: 135px;
+}
+.chartIndicator{
+    margin-bottom: 15px;
+}
+.chartIndicator .indicate{
+    height: 15px;
+    width: 25px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.subheading{
+  text-align: left;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 30px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #00a499;
+}
+.sub-title{
+  text-align: left;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 30px;
+
+    margin-bottom: 18px;
+    border-bottom: 1px solid #00a499;
+}
+
+.float-left{
+  float: left;
+}
+.float-right{
+  float: right;
+}
+
+.message-div{
+ text-align: center;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 500;
+}
+
+.message-div span{
+  font-weight: 600;
+    font-size: 37px;
+    color: #00a499;
+}
+
+
+.pad-40{
+  padding: 40px 0;
+}
+.pad-20{
+  padding: 20px 0;
+}
+
+.hr-line {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #00a499 !important;
+    margin: 0.5em 0 !important;
+    padding: 0;
+}
+.contentBox{
+background: #f5f5f5;
+    margin-top: 2%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: left;
+    width: 88%;
+    padding-left: 6%;
+}
+
+.contentBox .midText{
+  font-size: 18px;
+    line-height: 30px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-align: left;
+    margin-bottom: 1%;
+}
+.contentBox .detail{
+      margin: 0px;
+    margin-bottom: 1%;
+    font-size: 17px;
+    font-weight: 500;
+}
+.contentBox .itemuser{
+  margin: 0px;
+    font-size: 14px;
+}
+.item-title{
+    font-size: 20px;
+    margin-top: 4%;
+}
+
+.pagelink{
+      color: #00a499;
+    line-height: 20px;
+    font-size: 15px;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.pad-tp-1{
+      padding-top: 2%;
+}
+.schedule-time{
+  margin-bottom: 1%;
+}
+.schedule-time span{
+  font-size: 14px;
+    padding-right: 9%
+}
+.view-all-btn{
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+.view-all-btn a{
+      color: #00a499;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-right: 2%;
+    margin-top: 13%;
+    text-decoration: underline;
+}
+.without-underline{
+  text-decoration: none !important;
+}
+@media(min-width:1280px){
+.summarySection .row{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.summarySection .col-md-4{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+}
+
+.col-pad-rt{
+  padding-right:3%;
+  padding-left:0%;
+}
+.col-pad-lt{
+  padding-left:3%;
+}
+
+@media(max-width:1500px){
+  .contentBox .midText{
+  font-size: 17px;
+}
+.contentBox .detail{
+  font-size: 15px;
+}
+.contentBox .itemuser{
+ font-size: 13px;
+}
+.item-title{
+  font-size: 19px;
+    margin-top: 6%;
+    margin-bottom: 3%;
+}
+}
+.treaAccord .head{
+  text-align: center;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 30px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #00a499;
+}
+.treaAccord .panelBody
+{
+background-color: #fff;
+padding: 0px;
+}
+
+@media(max-width:559px)
+{
+  .message-div{
+    font-size: 11px;
+        margin-bottom: 5%;
+}
+.subheading{
+  font-size:20px;
+}
+.pagelink {
+    font-size: 11px;
+}
+.contentBox{
+ width: 100%;
+}
+.item-title{
+  text-align: center;
+      margin-top: 11%;
+}
+.view-all-btn{
+  text-align: center;
+}
+.treaAccord .head {
+    font-size: 20px;
+}
+.schedule-time span {
+    font-size: 13px;
+    padding-right: 4%;
+}
+.col-pad-lt {
+    padding-left: 0%;
+    padding-right: 0%;
+}
+}

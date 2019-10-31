@@ -1,0 +1,96 @@
+<!--
+    View:- schedule-timeline.html
+    Component:- ScheduleTimelineComponent => schedule-timeline.component.ts
+    Route:- '/workflow/schedule/csa/schedule-timeline'
+
+    Note:-
+ -->
+
+<h3 class="pageTitle">Timeline</h3>
+
+<div class="trea-welcome" *ngIf="schedule && schedule.resources && schedule.resources.length == 0 && searchList == ''">
+  <h4>There are no Scheduled Blocks yet.</h4>
+  <p class="textJustified">
+    Staff and Assets may be unavailable from your pool of resources from time to time, due to vacations, training, and
+    other events. Scheduled blocks can be specified her to ensure that these resources do not get booked
+    inappropriately.
+  </p>
+  <p class="textJustified">
+    Scheduled Blocks will be listed here when an authorized user has created one.
+  </p>
+  <p class="textJustified">
+    At least one Employee, Subcontractor, or Asset must be created before a Scheduled block can be made.
+  </p>
+</div>
+<div class="head-row">
+  <div class="schedule-controls">
+    <div class="search-section">
+      <div class="input-group">
+        <span class="search-icn" id="basic-addon1">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>
+        <input type="text" class="form-control" [(ngModel)]="searchList" (ngModelChange)="getSearchTxt(searchList)"
+          (keyup)="searchTxt = util.searchInList($event, searchList)" (keydown.enter)="getSearchResult()">
+        <button mat-raised-button class="client-btn" (click)="getSearchResult()">
+          Search
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <form [formGroup]="scheduleFilters" (ngSubmit)="updateSchedule()">
+    <div class="type-filters pull-left">
+      <div class="checkBox type-filter">
+        <label>
+          <input checked="" type="checkbox" (change)="checkAsset($event)">
+          <span class="iconChk"><i class="fa fa-check"></i></span>
+          Assets
+        </label>
+      </div>
+      <div class="checkBox type-filter">
+        <label>
+          <input checked="" type="checkbox" (change)="checkEmployees($event)">
+          <span class="iconChk"><i class="fa fa-check"></i></span>
+          Employees
+        </label>
+      </div>
+      <div class="checkBox type-filter">
+        <label>
+          <input checked="" type="checkbox" (change)="checkSubcontractors($event)">
+          <span class="iconChk"><i class="fa fa-check"></i></span>
+          Subcontractors
+        </label>
+      </div>
+      <div class="checkBox type-filter">
+        <label>
+          <input checked="" type="checkbox" (change)="checkAuthorizedUser($event)">
+          <span class="iconChk"><i class="fa fa-check"></i></span>
+          Authorized Users
+        </label>
+      </div>
+    </div>
+
+    <div class="date-filters pull-right">
+      <div class="dateWrapper">
+        <input type="text" id="start-date" class="date" formControlName="startDate" matInput [matDatepicker]="start"
+          (dateInput)="startDateChange($event)" (dateChange)="startDateChange($event)">
+        <mat-datepicker #start (selectedChanged)="startDateChange($event)"></mat-datepicker>
+        <span class="dateIcon" (click)="start.open()"><img src="assets/icon/date_picker.png"></span>
+      </div>
+
+      <label for="end-date">to</label>
+      <div class="dateWrapper">
+        <input type="text" [min]="event_start_date" id="end-date" matInput class="date" formControlName="endDate"
+          [matDatepicker]="end" (dateInput)="endDateChange($event)" (dateChange)="endDateChange($event)">
+        <mat-datepicker #end (selectedChanged)="endDateChange($event)"></mat-datepicker>
+        <span class="dateIcon" (click)="end.open()"><img src="assets/icon/date_picker.png"></span>
+      </div>
+    </div>
+
+
+  </form>
+</div>
+<app-schedule-display *ngIf="schedule && schedule.resources && schedule.resources.length > 0" [schedule]="schedule"
+  [displayDays]="displayDays" (childEvent)="sortListEvent($event)">
+</app-schedule-display>

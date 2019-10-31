@@ -1,0 +1,363 @@
+<div class="locationsWrap">
+    <div class="location-section">
+        <h3 class="pageTitle">Ledger</h3>
+
+        <div class="trea-welcome" *ngIf="ledgerList.length == 0 && onBoarding">
+            <h4>There are no ledger entries yet.</h4>
+            <p class="textJustified">
+                The Ledger is a balancing account of all transactions realized by your company: it records all payments
+                made and received on a daily basis by the organization. Transactions will be listed here when they have
+                been created.
+            </p>
+        </div>
+
+        <div class="financials-overview" *ngIf="ledgerList.length != 0">
+            <div class="timeLineWrap">
+                <div class="reportOptionTabsTop">
+                    <div class="tabs">
+                        <div class="infoText">30 Days</div>
+                    </div>
+                    <div class="tabs">
+                        <div class="infoText">60 Days</div>
+                    </div>
+                    <div class="tabs">
+                        <div class="infoText">90 Days</div>
+                    </div>
+                    <div class="tabs">
+                        <div class="infoText">180 Days</div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="reportOptionTabsBottom">
+                    <div class="tabs">
+                        <div class="vertLine"></div>
+                        <div class="treaRadioBtn">
+                            <input autocomplete="nope" name="workflowOpt" type="radio" id="workflowOpt1" value="30"
+                                (change)="timeLineChange($event,'thirty')" [checked]="timeLineData.thirty">
+                            <label for="workflowOpt1"></label>
+                        </div>
+                    </div>
+                    <div class="tabs" id="myid">
+                        <div class="vertLine"></div>
+                        <div class="treaRadioBtn">
+                            <input autocomplete="nope" name="workflowOpt" type="radio" id="workflowOpt2" value="60"
+                                (change)="timeLineChange($event,'sixty')" [checked]="timeLineData.sixty">
+                            <label for="workflowOpt2"></label>
+                        </div>
+                    </div>
+                    <div class="tabs">
+                        <div class="vertLine"></div>
+                        <div class="treaRadioBtn">
+                            <input autocomplete="nope" name="workflowOpt" type="radio" id="workflowOpt3" value="90"
+                                (change)="timeLineChange($event,'ninty')" [checked]="timeLineData.ninty">
+                            <label for="workflowOpt3"></label>
+                        </div>
+                    </div>
+                    <div class="tabs">
+                        <div class="vertLine"></div>
+                        <div class="treaRadioBtn">
+                            <input autocomplete="nope" name="workflowOpt" type="radio" id="workflowOpt4" value="180"
+                                (change)="timeLineChange($event,'oneEighty')" [checked]="timeLineData.oneEighty">
+                            <label for="workflowOpt4"></label>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="widgetWrap">
+                <div class="col-sm-6">
+                    <div class="contentBox">
+                        <div class="midText">Total Debit</div>
+                        <div class="amtTxt txt-green">
+                            {{pageData.totalDebit | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="contentBox">
+                        <div class="midText">Total Credit</div>
+                        <div class="amtTxt txt-green">
+                            {{pageData.totalCredit | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="head-row clearfix" *ngIf="ledgerList.length != 0">
+            <div class="search-section">
+                <div class="input-group">
+                    <span class="search-icn" id="basic-addon1">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </span>
+                    <input autocomplete="nope" [(ngModel)]="searchList" type="text"
+                        (ngModelChange)="getSearchTxt(searchList)" class="form-control" placeholder="" aria-label=""
+                        aria-describedby="basic-addon1" (keydown.enter)="searchTxt = searchList">
+                    <button type="button" mat-raised-button class="client-btn" (click)="searchTxt = searchList">Search</button>
+                </div>
+            </div>
+            <div class="add-client newPurhaseBtnWrap">
+                <!-- <button mat-raised-button class="client-btn" type="button" (click)="newInvoice()">New Invoice</button> -->
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <div>
+            <div class="trea-data-table" *ngIf="ledgerList.length != 0">
+                <table class="table table-striped ">
+                    <thead>
+                        <tr>
+
+                            <th width="450">
+                                <div class="table-hdr">
+                                    <div>
+                                        <span>Date</span>
+
+                                        <span
+                                            (click)="sortColumnType = 'A';sortColumn = 'date';sortOrder = sortColumn === 'date' ? sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'"
+                                            class="cursorPtr">
+
+                                            <i [ngClass]=" sortColumn == 'date' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                                                class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                                            aria-label="" aria-describedby="basic-addon1" [(ngModel)]="dateSearch">
+                                    </div>
+                                </div>
+                            </th>
+                            <th width="450">
+                                <div class="bdr-left table-hdr">
+                                    <div>
+                                        <span>Description</span>
+
+                                        <span
+                                            (click)="sortColumnType = 'A';sortColumn = 'description';sortOrder = sortColumn === 'description' ? sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'"
+                                            class="cursorPtr">
+                                            <i [ngClass]=" sortColumn == 'description' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                                                class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                                            aria-label="" aria-describedby="basic-addon1"
+                                            [(ngModel)]="descriptionSearch">
+                                    </div>
+                                </div>
+                            </th>
+                            <th width="450">
+                                <div class="bdr-left table-hdr">
+                                    <div>
+                                        <span>Debit</span>
+
+                                        <span
+                                            (click)="sortColumnType = 'N';sortColumn = 'num_debit';sortOrder = sortColumn === 'num_debit' ? sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'"
+                                            class="cursorPtr">
+                                            <i [ngClass]=" sortColumn == 'num_debit' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                                                class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                                            aria-label="" aria-describedby="basic-addon1" [(ngModel)]="amountSearch">
+                                    </div>
+                                </div>
+                            </th>
+                            <th width="450">
+                                <div class="bdr-left table-hdr">
+                                    <div>
+                                        <span>Credit</span>
+
+                                        <span
+                                            (click)="sortColumnType = 'N';sortColumn = 'num_credit';sortOrder = sortColumn === 'num_credit' ? sortOrder === 'ASC' ? 'DSC' : 'ASC' : 'ASC'"
+                                            class="cursorPtr">
+                                            <i [ngClass]=" sortColumn == 'num_credit' && sortOrder == 'ASC' ? 'fa-rotate-90' : 'fa-rotate-270' "
+                                                class="fa fa-signal" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <input autocomplete="nope" type="text" class="form-control" placeholder=""
+                                            aria-label="" aria-describedby="basic-addon1"
+                                            [(ngModel)]="creditAmountSearch">
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let indx=index ;let ledger of ledgerList | sortBy:sortColumn:sortOrder:sortColumnType | searchfilter:creditAmountSearch:'credit' | searchfilter:dateSearch:'date' | searchfilter:descriptionSearch:'description' | searchfilter:amountSearch:'debit' | searchfilter:searchTxt:'credit,date,description,debit' | listLengthfilter | paginate: paginationKey"
+                            (click)="getSelectedLedger(ledger, indx)"
+                            [ngClass]="selectedIndex == indx ? 'sel-row-highlight' : ''">
+                            <td>
+                                <span class="dn">{{ indx == 0 ? updateCount(ledger.count) : ''}}</span>
+                                {{ledger.date}}
+                            </td>
+                            <td>
+                                {{ledger.description}}
+                            </td>
+                            <td class="qty-cost">
+                                {{ledger.debit == 0 ? '-' : (ledger.debit | currency: util.getCurrency() :'symbol-narrow')}}
+
+                            </td>
+                            <td class="qty-cost">
+                                {{ledger.credit == 0 ? '-' : (ledger.credit | currency: util.getCurrency() :'symbol-narrow')}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="treaPagination" *ngIf="ledgerList.length != 0 && constant.ITEM_COUNT != 0">
+                <div class="pull-right">
+                    <span> {{1+(paginationKey.currentPage-1)*paginationKey.itemsPerPage}} -
+                        {{(paginationKey.itemsPerPage <= listCount) && (paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage <= listCount) ? paginationKey.itemsPerPage+(paginationKey.currentPage-1)*paginationKey.itemsPerPage : listCount}}</span><span>
+                        of {{listCount}} items</span>
+                </div>
+                <div class="pull-right">
+                    <select [(ngModel)]="paginationKey.itemsPerPage" (change)="util.changeItemPerPage()">
+                        <option *ngFor="let pageNo of constant.PAGINATION_ITEMS" [ngValue]="pageNo"> {{pageNo}}
+                        </option>
+                    </select>
+                    <span> items per page</span>
+                </div>
+                <div class="pull-right">
+                    <pagination-controls (pageChange)="util.changePage($event, paginationKey)" directionLinks="true"
+                        autoHide="false" previousLabel="Pre" nextLabel="Next" screenReaderPaginationLabel="Pagination"
+                        screenReaderPageLabel="page" screenReaderCurrentLabel="You're on page">
+                    </pagination-controls>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div id="ledgerMark" class="invoiceReviewSection" *ngIf="selectedLedger">
+        <div class="pageTitle">Ledger {{selectedLedger.description}}</div>
+
+        <div class="headInfoWrap">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="label-col">Date</div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-col">{{util.getFormatedDate(selectedLedger.date)}}</div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="selectedLedger.client">
+                        <div class="col-sm-4">
+                            <div class="label-col">Client</div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-col">
+                                {{ selectedLedger.client }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="label-col">Quotation No.</div>
+                        </div>
+                        <div class="col-sm-8">
+
+                            <div class="info-col">
+                                <a href="javascript:void(0)" *ngIf="selectedLedger.quotation_no" class="email"
+                                    [routerLink]="['/workflow/quote/csa/quotation-list/', selectedLedger.quotation_id ]">
+                                    {{ selectedLedger.quotation_no }}
+                                </a>
+                                <span *ngIf="!selectedLedger.quotation_no">N/A</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row" >
+                        <div class="col-sm-4">
+                            <div class="label-col">W/O No.</div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-col">
+                                <ng-container *ngIf="selectedLedger.work_orders.length == 0">N/A</ng-container>
+                                <ng-container *ngIf="selectedLedger.work_orders.length > 0">
+                                    <span *ngFor="let workorder of selectedLedger.work_orders; let lastIndex = last;">
+                                        <a href="javascript:void(0)" class="email" [routerLink]="['/workflow/wo/csa/work-order-list/', workorder.work_order_id]">
+                                            {{workorder.work_order_no}}
+                                        </a>
+                                        <ng-container *ngIf="!lastIndex">,</ng-container>
+                                    </span>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="selectedLedger.supplier">
+                        <div class="col-sm-4">
+                            <div class="label-col">Supplier</div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-col">
+                                {{ selectedLedger.supplier }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="label-col">P/O No.</div>
+                        </div>
+                        <div class="col-sm-8" >
+                            <div class="info-col"><a *ngIf="selectedLedger.purchase_order_no" href="javascript:void(0)" class="email"
+                                    [routerLink]="['/inventory/po/csa/purchase-order-list/', selectedLedger.purchase_order_id]">
+                                    {{ selectedLedger.purchase_order_no }}
+                                </a>
+                                <ng-container *ngIf="!selectedLedger.purchase_order_no">
+                                    N/A
+                                </ng-container>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="label-col">R/S No.</div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-col"><a  *ngIf="selectedLedger.receiving_slip_no" href="javascript:void(0)" class="email"
+                                    [routerLink]="['/inventory/rs/csa/receiving-slips-list', selectedLedger.receiving_slip_id]">
+                                    {{ selectedLedger.receiving_slip_no }}
+                                </a>
+                                <ng-container *ngIf="!selectedLedger.receiving_slip_no">
+                                    N/A
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="label-col">Billing Address</div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="info-col" *ngIf="selectedLedger.billing_address">
+                                {{selectedLedger.billing_address}}
+                            </div>
+                            <div class="info-col" *ngIf="!selectedLedger.billing_address">
+                                N/A
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

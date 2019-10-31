@@ -1,0 +1,1026 @@
+<!-- HTML for Save For Add Work Location-->
+<div class="dialog dailogContainer" *ngIf="action == 'addWorkLocation'">
+  <span class="close-icon" (click)="closeDialog()">
+    <img src="assets/icon/close_icon.png" />
+  </span>
+  <div class="dialog-hdr">
+    <div *ngIf="locationType == 'workLocation'">New Work Location</div>
+    <div *ngIf="locationType == 'billLocation'">New Billing Address</div>
+  </div>
+  <div class="frmWrapper clearfix">
+    <form autocomplete="off" role="form" [formGroup]="addWorkLocationForm">
+
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label">Address Line 1</label>
+          <div class="col-sm-8">
+
+            <input autocomplete="nope" id="address_line_1" name="address_line_1" class="form-control" placeholder="" formControlName="address_line_1" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"  #search  />
+
+            <span
+              class="error-msg"
+              *ngIf="
+                addWorkLocationForm.controls.address_line_1.invalid &&
+                (addWorkLocationForm.controls.address_line_1.dirty ||
+                  addWorkLocationForm.controls.address_line_1.touched ||
+                  submitted)
+              "
+            >
+              <small
+                *ngIf="
+                  addWorkLocationForm.controls.address_line_1.errors.required
+                "
+                >Address Line 1 is required.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Address Line 2</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              placeholder="(Optional)"
+              [attr.id]="'addr2' + indx"
+              formControlName="address_line_2"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Contact Type</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="contact_type"
+              type="text"
+              placeholder="(optional)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Name</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="name"
+              type="text"
+              placeholder="(optional)"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addWorkLocationForm.controls.name.invalid &&
+                (addWorkLocationForm.controls.name.dirty ||
+                  addWorkLocationForm.controls.name.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addWorkLocationForm.controls.name.errors.required"
+                >Name is required.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Phone Number</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control marTop10"
+              [textMask]="{ mask: constant.PHONE_NUMBER_MASK }"
+              formControlName="phone_no"
+              type="text"
+              placeholder="(optional)"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addWorkLocationForm.controls.phone_no.invalid &&
+                (addWorkLocationForm.controls.phone_no.dirty ||
+                  addWorkLocationForm.controls.phone_no.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addWorkLocationForm.controls.phone_no.errors.required"
+                >Phone Number is required.</small
+              >
+              <small *ngIf="addWorkLocationForm.controls.phone_no.errors.pattern"
+                >Invalid Phone Number.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Email</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="email_id"
+              type="text"
+              placeholder="(optional)"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addWorkLocationForm.controls.email_id.invalid &&
+                (addWorkLocationForm.controls.email_id.dirty ||
+                  addWorkLocationForm.controls.email_id.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addWorkLocationForm.controls.email_id.errors.required"
+                >Email Id is required.</small
+              >
+              <small *ngIf="addWorkLocationForm.controls.email_id.errors.pattern"
+                >Invalid Email Id.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="button-row">
+        <button
+          mat-raised-button
+          id="save-btn"
+          type="button"
+          class="trea-btn"
+          (click)="addWorkLocation(addWorkLocationForm)"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- End -->
+
+<!-- HTML for Schedule Site Inspection -->
+<div class="dialog dailogContainer" *ngIf="action == 'siteInspection'">
+  <span class="close-icon" (click)="closeDialog()">
+    <img src="assets/icon/close_icon.png" />
+  </span>
+  <div class="dialog-hdr">
+    <div>Schedule Site Inspection</div>
+  </div>
+  <div class="frmWrapper clearfix">
+    <form autocomplete="off" role="form" [formGroup]="inspectForm">
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 control-label " for="clientAvailability"
+            >Client Availability</label
+          >
+          <div class="col-md-8">
+            <div class="dateWrapper">
+              <!-- <input autocomplete="nope" type="text" placeholder="" formControlName="caslDate" class="date" [matDatepicker]="picker" [min]="minDate"> -->
+              <input
+                autocomplete="nope"
+                type="text"
+                formControlName="inspection_date"
+                placeholder=""
+                class="date"
+                [matDatepicker]="picker"
+                [min]="minDate"
+                style="pointer-events: none;"
+              />
+              <mat-datepicker
+                #picker
+                (selectedChanged)="getList()"
+              ></mat-datepicker>
+              <span class="dateIcon" (click)="picker.open()"
+                ><img src="assets/icon/date_picker.png"
+              /></span>
+              <div class="clearfix"></div>
+              <span
+                class="error-msg"
+                *ngIf="
+                  inspection_date.invalid &&
+                  (inspection_date.dirty ||
+                    inspection_date.touched ||
+                    submitted)
+                "
+              >
+                <small *ngIf="inspection_date.errors.required"
+                  >Client Availability is required.</small
+                >
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 col-xs-12 control-label" for="startTime"
+            >Start Time</label
+          >
+          <div class="col-md-8">
+            <input
+              autocomplete="off"
+              [textMask]="{ mask: constant.TIME_MASK }"
+              formControlName="start_time"
+              class="form-control timeInput"
+              id="sTime"
+              name="sTime"
+              placeholder="__:__"
+              type="text"
+              (keyup)="getList()"
+            />
+            <select
+              formControlName="start_time_format"
+              class="form-control timeFormat"
+              (change)="getList()"
+            >
+              <option [value]="'am'">am</option>
+              <option [value]="'pm'">pm</option>
+            </select>
+
+            <div class="clearfix"></div>
+            <span
+              class="error-msg"
+              *ngIf="
+                start_time.invalid &&
+                (start_time.dirty || start_time.touched || submitted)
+              "
+            >
+              <small *ngIf="start_time.errors.required"
+                >Start Time is required.</small
+              >
+              <small *ngIf="start_time.errors.pattern"
+                >Enter valid Start Time.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 col-xs-12 control-label" for="endTime"
+            >End Time</label
+          >
+          <div class="col-md-8">
+            <input
+              autocomplete="off"
+              [textMask]="{ mask: constant.TIME_MASK }"
+              formControlName="end_time"
+              class="form-control timeInput"
+              id="eTime"
+              name="eTime"
+              placeholder="__:__"
+              type="text"
+              (keyup)="getList()"
+            />
+            <select
+              formControlName="end_time_format"
+              class="form-control timeFormat"
+              (change)="getList()"
+            >
+              <option [value]="'am'">am</option>
+              <option [value]="'pm'">pm</option>
+            </select>
+            <div class="clearfix"></div>
+            <span
+              class="error-msg"
+              *ngIf="
+                end_time.invalid &&
+                (end_time.dirty || end_time.touched || submitted)
+              "
+            >
+              <small *ngIf="end_time.errors.required"
+                >End Time is required.</small
+              >
+              <small *ngIf="end_time.errors.pattern"
+                >Enter valid End Time.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 col-xs-12 control-label" for="insepector"
+            >Inspector</label
+          >
+          <div class="col-md-8">
+            <div class="autoCompleteList">
+              <div class="searchList">
+                <mat-form-field class="product">
+                  <input
+                    autocomplete="nope"
+                    matInput
+                    placeholder=""
+                    [formControl]="inspector_name"
+                    [matAutocomplete]="inspectorAutoComp"
+                    (keyup)="validateInspector($event)"
+                    id="inspector_name"
+                  />
+                  <i
+                    *ngIf="inspector_name.value != ''"
+                    (click)="
+                      util.clearAutoComplete('inspector_name', [
+                      inspector,
+                      inspector_name
+                      ])
+                    "
+                    class="clearAutoComplete fa fa-times-circle"
+                    aria-hidden="true"
+                  ></i>
+                  <img
+                    *ngIf="inspector_name.value == ''"
+                    class="selectBoxIcon"
+                    aria-hidden
+                    src="assets/icon/select.png"
+                  />
+                  <mat-autocomplete #inspectorAutoComp="matAutocomplete">
+                    <mat-option
+                      *ngFor="
+                        let indx = index;
+                        let inspector;
+                        of: filteredInspectors | async
+                      "
+                      [value]="inspector.full_name"
+                      (onSelectionChange)="
+                        getSelectedInspector(inspector, $event)
+                      "
+                    >
+                      <span>{{ inspector.full_name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <span
+              class="error-msg"
+              *ngIf="
+                inspector.invalid &&
+                (inspector.dirty || inspector.touched || finSubmitted)
+              "
+            >
+              <small *ngIf="inspector.errors.required"
+                >Please select Inspector form the list.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="button-row">
+        <button
+          mat-raised-button
+          id="submit-btn"
+          class="trea-btn"
+          (click)="submit(inspectForm)"
+        >
+          Submit
+        </button>
+        <button mat-raised-button class="trea-btn" (click)="closeDialog()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- End -->
+
+<!-- HTML for Save For Follow Up-->
+<div class="dialog dailogContainer" *ngIf="action == 'saveForFollowUp'">
+  <span class="close-icon" (click)="closeDialog()">
+    <img src="assets/icon/close_icon.png" />
+  </span>
+  <div class="dialog-hdr">
+    <div>Save For Follow Up</div>
+  </div>
+  <div class="frmWrapper clearfix">
+    <form autocomplete="off" role="form" [formGroup]="followInspectForm">
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 col-xs-12 control-label" for="insepector"
+            >Follow up by</label
+          >
+          <div class="col-md-8">
+            <div class="autoCompleteList">
+              <div class="searchList">
+                <mat-form-field class="product">
+                  <input
+                    autocomplete="nope"
+                    matInput
+                    placeholder=""
+                    [formControl]="follow_up_by_name"
+                    [matAutocomplete]="FinspectorAutoComp"
+                    (keyup)="validateFollowUps($event)"
+                    id="inspector_follow"
+                  />
+                  <i
+                    *ngIf="follow_up_by_name.value != ''"
+                    (click)="
+                      util.clearAutoComplete('inspector_follow', [
+                        follow_up_by_name,
+                        follow_up_by
+                      ])
+                    "
+                    class="clearAutoComplete fa fa-times-circle"
+                    aria-hidden="true"
+                  ></i>
+                  <img
+                    *ngIf="follow_up_by_name.value == ''"
+                    class="selectBoxIcon"
+                    aria-hidden
+                    src="assets/icon/select.png"
+                  />
+                  <mat-autocomplete #FinspectorAutoComp="matAutocomplete">
+                    <mat-option
+                      *ngFor="
+                        let indx = index;
+                        let follow;
+                        of: filteredFollowUp | async
+                      "
+                      [value]="follow.name"
+                      (onSelectionChange)="
+                        getSelectedFolloUp(follow, $event)
+                      "
+                    >
+                      <span>{{ follow.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <span
+              class="error-msg"
+              *ngIf="
+                follow_up_by.invalid &&
+                (follow_up_by.dirty ||
+                  follow_up_by.touched ||
+                  finSubmitted)
+              "
+            >
+              <small *ngIf="follow_up_by.errors.required"
+                >Please select Inspector form the list.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-md-4 control-label txtColor" for="follow_up_comment"
+            >Comment</label
+          >
+          <div class="col-md-8">
+            <textarea
+              class="form-control "
+              formControlName="follow_up_comment"
+              placeholder="(Optional)"
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="button-row">
+        <button
+          mat-raised-button
+          id="save-btn"
+          class="trea-btn"
+          (click)="saveForFollowUp(followInspectForm)"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- End -->
+<!-- HTML for Save For Add Client-->
+<div class="dialog dailogContainer" *ngIf="action == 'addClient'">
+  <span class="close-icon" (click)="closeDialog()">
+    <img src="assets/icon/close_icon.png" />
+  </span>
+  <div class="dialog-hdr">
+    <div>New Client</div>
+  </div>
+  <div class="frmWrapper clearfix">
+    <form autocomplete="off" role="form" [formGroup]="addClientForm">
+      <div class="row">
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label">Client Type</label>
+          <div class="col-sm-8">
+            <select class="form-control" formControlName="client_type">
+              <option value="" selected></option>
+              <option value="Individual">Individual</option>
+              <option value="Company">Company</option>
+            </select>
+            <span
+              class="error-msg"
+              *ngIf="
+                addClientForm.controls.client_type.invalid &&
+                (addClientForm.controls.client_type.dirty ||
+                  addClientForm.controls.client_type.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addClientForm.controls.client_type.errors.required"
+                >Client Type is required.
+              </small>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="row"
+      >
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label">Client Name</label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="client_name"
+              placeholder=""
+              type="text"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addClientForm.controls.client_name.invalid &&
+                (addClientForm.controls.client_name.dirty ||
+                  addClientForm.controls.client_name.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addClientForm.controls.client_name.errors.required"
+                >Client Name is required.</small
+              >
+              <small *ngIf="addClientForm.controls.client_name.errors.minlength"
+                >Client Name must be at least 2 characters long.</small
+              >
+              <small *ngIf="addClientForm.controls.client_name.errors.maxlength"
+                >Client Name must be less than 100 characters.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="row"
+        *ngIf="addClientForm.get('client_type').value == 'Company'"
+      >
+        <div class="form-group clearfix">
+          <label class="col-sm-4 control-label optional">Legal Name </label>
+          <div class="col-sm-8">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="legal_name"
+              placeholder="(Optional)"
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group clearfix ">
+          <label class="col-sm-4 control-label optional">Payment Term</label>
+          <div class="col-sm-8">
+             <span class="days-label">{{constant.DAYS}}</span>
+              <input
+                autocomplete="nope"
+                class="form-control optional"
+                formControlName="payment_term"
+                placeholder=" (optional)"
+                type="number"
+              />
+
+            <span
+              class="error-msg"
+              *ngIf="
+                addClientForm.controls.payment_term.invalid &&
+                (addClientForm.controls.payment_term.dirty ||
+                  addClientForm.controls.payment_term.touched ||
+                  submitted)
+              "
+            >
+              <small
+                *ngIf="addClientForm.controls.payment_term.errors.min"
+                >Payment term cannot be negative.</small
+              >
+            </span>
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix optional">
+          <label class="col-sm-4 control-label">Comments</label>
+          <div class="col-sm-8">
+            <textarea
+              class="form-control "
+              placeholder="(Optional)"
+              rows="5"
+              name="comment"
+              placeholder=""
+              formControlName="comment"
+              class="form-control "
+              #comment
+            ></textarea>
+            <span
+              class="error-msg"
+              *ngIf="
+                addClientForm.controls.comment.invalid &&
+                (addClientForm.controls.comment.dirty ||
+                  addClientForm.controls.comment.touched ||
+                  submitted)
+              "
+            >
+              <small *ngIf="addClientForm.controls.comment.errors.required"
+                >Comment is required.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="button-row">
+        <button
+          mat-raised-button
+          id="save-btn"
+          class="trea-btn"
+          (click)="addClient(addClientForm)"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- End -->
+
+<!-- Add Service Defination -->
+<div class="dialog dailogContainer" *ngIf="action == 'addServiceDefination'">
+  <span class="close-icon" (click)="closeDialog()">
+    <img src="assets/icon/close_icon.png" />
+  </span>
+  <div class="dialog-hdr">
+    <div>New Service Type</div>
+  </div>
+  <div class="frmWrapper clearfix">
+    <form autocomplete="off" role="form" [formGroup]="addServiceDefinationForm">
+
+      <div class="row">
+        <div class="col-sm-4">
+          <label class=" control-label">Service Type</label>
+        </div>
+
+        <div class="col-sm-4">
+          <label class=" control-label">Service Definition</label>
+        </div>
+
+        <div class="col-sm-4">
+          <label class=" control-label">Price</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <div class="col-sm-4">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="service_type"
+              type="text"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addServiceDefinationForm.controls.service_type.invalid &&
+                (addServiceDefinationForm.controls.service_type.dirty ||
+                  addServiceDefinationForm.controls.service_type.touched ||
+                  submitted)
+              "
+            >
+              <small
+                *ngIf="
+                  addServiceDefinationForm.controls.service_type.errors
+                    .required
+                "
+                >Service Type is required.</small
+              >
+            </span>
+          </div>
+
+          <div class="col-sm-4">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="service_definition"
+              type="text"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addServiceDefinationForm.controls.service_definition.invalid &&
+                (addServiceDefinationForm.controls.service_definition.dirty ||
+                  addServiceDefinationForm.controls.service_definition
+                    .touched ||
+                  submitted)
+              "
+            >
+              <small
+                *ngIf="
+                  addServiceDefinationForm.controls.service_definition.errors
+                    .required
+                "
+                >Service Definition is required.</small
+              >
+            </span>
+          </div>
+
+          <div class="col-sm-4">
+            <input
+              autocomplete="nope"
+              class="form-control"
+              formControlName="price"
+              type="text"
+            />
+            <span
+              class="error-msg"
+              *ngIf="
+                addServiceDefinationForm.controls.price.invalid &&
+                (addServiceDefinationForm.controls.price.dirty ||
+                  addServiceDefinationForm.controls.price.touched ||
+                  submitted)
+              "
+            >
+              <small
+                *ngIf="addServiceDefinationForm.controls.price.errors.required"
+                >Price is required.</small
+              >
+              <small
+                *ngIf="addServiceDefinationForm.controls.price.errors.pattern"
+                >Only Numers Are Allowed.</small
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+      <div class="button-row">
+        <button
+          id="add-service-btn"
+          mat-raised-button
+          class="trea-btn"
+          (click)="addServiceDefinition(addServiceDefinationForm)"
+        >
+          Submit
+        </button>
+        <button mat-raised-button class="trea-btn" (click)="closeDialog()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- End -->
+
+<!-- Approve Confirmation -->
+<div class="dialog" *ngIf="action == 'approveConfirmation'">
+  <span class="close-icon" (click)="closeDialog()">
+    <i class="fa fa-times" aria-hidden="true"></i>
+  </span>
+  <div class="dialog-hdr">
+    <div>Quotation Approval</div>
+  </div>
+  <!-- *ngIf="!isSuccess" -->
+  <div>
+    <div class="dialog-txt">
+      <div class="optional">
+        <form
+          autocomplete="off"
+          role="form"
+          [formGroup]="addApproveConfirmationNoteForm"
+        >
+          <div class="noteLbl">Note:</div>
+          <div class="form-group">
+            <!-- formControlName="approve_note" -->
+            <textarea
+              placeholder="(Optional)"
+              class="inputDetail"
+              rows="4"
+              formControlName="approve_note"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="errMsgCon" *ngIf="isError">
+      <small>{{ errMsg }}</small>
+    </div>
+
+    <div class="button-row">
+      <button
+        id="confirm-btn"
+        mat-raised-button
+        class="trea-btn"
+        (click)="confirm()"
+      >
+        Confirm
+      </button>
+      <button mat-raised-button class="trea-btn" (click)="closeDialog()">
+        Cancel
+      </button>
+    </div>
+  </div>
+  <!-- <div *ngIf="isSuccess">
+            <div class="dialog-txt">{{successMsg}}.</div>
+            <div class="button-row">
+                <button id="" mat-raised-button class="trea-btn" (click)="closeDialog()">Done</button>
+            </div>
+        </div> -->
+</div>
+<!-- End -->
+<!-- Approve Confirmation From Overview page -->
+<div class="dialog" *ngIf="action == 'approveConfirmationFromOverView'">
+    <span class="close-icon" (click)="closeDialog()">
+      <i class="fa fa-times" aria-hidden="true"></i>
+    </span>
+    <div class="dialog-hdr">
+      <div>Quotation Approval</div>
+    </div>
+    <!-- *ngIf="!isSuccess" -->
+    <div>
+      <div class="dialog-txt">
+        <div class="optional">
+          <form
+            autocomplete="off"
+            role="form"
+            [formGroup]="addApproveConfirmationNoteForm"
+          >
+            <div class="noteLbl">Note:</div>
+            <div class="form-group">
+              <!-- formControlName="approve_note" -->
+              <textarea
+                placeholder="(Optional)"
+                class="inputDetail"
+                rows="4"
+                formControlName="approve_note"
+              ></textarea>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="errMsgCon" *ngIf="isError">
+        <small>{{ errMsg }}</small>
+      </div>
+
+      <div class="button-row">
+        <button
+          id="confirm-btn"
+          mat-raised-button
+          class="trea-btn"
+          (click)="confirmFromOverview(addApproveConfirmationNoteForm)"
+        >
+          Confirm
+        </button>
+        <button mat-raised-button class="trea-btn" (click)="closeDialog()">
+          Cancel
+        </button>
+      </div>
+    </div>
+</div>
+<!-- End -->
+<!-- HTML for Add Location -->
+<div class="dialog dailogContainer" *ngIf="action == 'addLocation'">
+    <span class="close-icon" (click)="closeDialog()">
+      <img src="assets/icon/close_icon.png" />
+    </span>
+    <div class="dialog-hdr">
+      <div>New Work Location</div>
+    </div>
+    <div class="frmWrapper clearfix">
+      <form autocomplete="off" role="form">
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 control-label txtColor" for="serviceType"
+              >Address Line 1</label
+            >
+            <div class="col-md-7">
+              <input
+                autocomplete="nope"
+                class="form-control"
+                name=""
+                placeholder=""
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 control-label txtColor" for="serviceType"
+              >Address Line 2</label
+            >
+            <div class="col-md-7">
+              <input
+                autocomplete="nope"
+                class="form-control"
+                name=""
+                placeholder="(optional)"
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 col-xs-12 control-label" for="country"
+              >Country</label
+            >
+            <div class="col-md-7">
+              <select class="form-control">
+                <option></option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 col-xs-12 control-label" for="province"
+              >Province</label
+            >
+            <div class="col-md-7">
+              <select class="form-control">
+                <option></option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 control-label txtColor" for="city">City</label>
+            <div class="col-md-7">
+              <input
+                autocomplete="nope"
+                class="form-control"
+                name=""
+                placeholder=""
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group clearfix">
+            <label class="col-md-5 control-label txtColor" for="postalCode"
+              >Postal Code</label
+            >
+            <div class="col-md-7">
+              <input
+                autocomplete="nope"
+                class="form-control"
+                name=""
+                placeholder=""
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="button-row">
+          <button mat-raised-button class="trea-btn">Submit</button>
+          <button mat-raised-button class="trea-btn" (click)="closeDialog()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+</div>
+<!-- End -->
+

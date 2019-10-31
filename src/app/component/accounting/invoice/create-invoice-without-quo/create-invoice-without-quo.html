@@ -1,0 +1,582 @@
+
+<div class="invoiceSection" *ngIf="isLoaded">
+
+    <div class="pageTitle">New Invoice Without Quotation</div>
+
+    <!-- Form Open -->
+    <form autocomplete="off" role="form" [formGroup]="invoiceForm">
+
+        <!-- Client Info -->
+        <div class="row">
+
+            <div class="col-sm-6">
+                
+                <!-- Select Client -->
+                <div class="row">
+
+                    <div class="form-group clearfix">
+
+                        <label class="col-sm-5 label-col" for="">Client Name</label>
+
+                        <div  class="col-sm-7">
+
+                            <div class="autoCompleteList">
+
+                                <div class="searchList">
+
+                                    <mat-form-field class="invoice-item">
+
+                                        <input autocomplete="nope" matInput #clientAutoCompleteInput placeholder="" formControlName="client_name" [matAutocomplete] ="clientAutoComp" (keyup)="validateClient($event)" id="client_id">
+
+                                         <i *ngIf="client_name.value!=''" (click)="removeLocations()" class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+
+                                        <img *ngIf="client_name.value==''" class="selectBoxIcon" aria-hidden src="assets/icon/select.png" />
+                                        <mat-autocomplete #clientAutoComp="matAutocomplete" #clientDropdown>
+
+                                            <mat-option *ngFor="let indx=index; let client of filteredClients | async" [value]="client.full_name" (onSelectionChange)="getSelectedClient(client, $event,'test','')">
+                                                <span>{{ client.full_name }}</span>
+                                            </mat-option>
+
+                                            <mat-option (click)="showAddClientPopup()" canAccess="client_create">
+
+                                                <img aria-hidden src="assets/icon/icon-add.png" />
+
+                                                <span>New Client</span>
+
+                                            </mat-option>
+
+                                        </mat-autocomplete> 
+
+
+                                        <div class="error-msg" *ngIf="client_id.invalid && (client_id.dirty || client_id.touched || submitted)">
+                                            <small *ngIf="client_id.errors.required">Please select Client from the list.</small>
+                                        </div>
+
+                                    </mat-form-field>
+
+                                    <div class="loaderField" *ngIf="isClientsRequestOnGoing"><i class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- / Select Client-->
+                
+                <!-- Work Location -->
+                <div class="row" *ngIf="client_name.value">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-5 label-col" for="">Work Location</label>
+                        <div  class="col-sm-7">
+                            <div class="autoCompleteList">
+                                <div class="searchList">
+                                    <mat-form-field class="product">
+                                        <input autocomplete="nope" #workAddressAutoCompleteInput  name="quoteWorkLocation" matInput placeholder="" formControlName="client_work_location" [matAutocomplete]="locationAutoComp" (keyup)="validateWorkLocation($event)" id="client_work_location">
+                                        <i *ngIf="client_work_location.value!=''" (click)="removeWorkLocations()" class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+                                        <img *ngIf="client_work_location.value==''" class="selectBoxIcon" aria-hidden src="assets/icon/select.png" />
+
+                                        <mat-autocomplete #locationAutoComp="matAutocomplete">
+
+                                            <mat-option *ngFor="let indx=index; let location of filteredWorkLocations | async" [value]="location.full_address" (onSelectionChange)="getSelectedLocation(location,$event)">
+                                            <span>{{ location.full_address }}</span>
+                                            </mat-option>
+
+                                            <mat-option (click)="showAddWorkLocationPopup(client_id.value,'workLocation')">
+                                                <img aria-hidden src="assets/icon/icon-add.png" />
+                                                <span>New Address</span>
+                                            </mat-option>
+
+                                        </mat-autocomplete>
+
+                                    </mat-form-field>
+
+                                    <div class="loaderField" *ngIf="isWorkLocationRequestOnGoing"><i class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                                </div>
+                            </div>
+                            
+                            <div class="error-msg" *ngIf="invoiceForm.get('client_work_location_id')?.invalid && (invoiceForm.get('client_work_location_id')?.dirty || invoiceForm.get('client_work_location_id')?.touched || submitted)">
+                                <small *ngIf="invoiceForm.get('client_work_location_id')?.errors?.required">Work Location is required.</small>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /Work Location -->
+
+                <div class="row">
+
+                    <div class="form-group clearfix" *ngIf="client_name.value">
+                            <label class="col-sm-5 label-col" for="">Billing Address</label>
+                            <div  class="col-sm-7" >
+                                <div class="checkBox">
+                                    <label>
+                                        <input formControlName="billing_location_same_as_work" type="checkbox" (change)="sameAsWork(billing_location_same_as_work.value)">
+                                        <span class="iconChk"><i class="fa fa-check"></i> </span>
+                                        Same as Work Location 
+                                    </label>
+                                </div>
+                                <div class="clearfix" style="margin-bottom: 15px;"></div>
+                                <div class="autoCompleteList" *ngIf="!billing_location_same_as_work.value">
+                                    <div class="searchList">
+                                        <mat-form-field class="product">
+
+                                            <input #billingAddressAutoCompleteInput 
+                                                autocomplete="off" 
+                                                matInput name="billingAddress"
+                                                placeholder="" 
+                                                formControlName="client_billing_location" 
+                                                [matAutocomplete]="billingLocationAutoComp" 
+                                                (keyup)="validateBillingLocation($event)"
+                                                id="client_billing_location"
+                                            >
+
+                                            <i *ngIf="client_billing_location.value!=''" (click)="removeBillingLocations()" class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+
+                                            <img *ngIf="client_billing_location.value==''" class="selectBoxIcon" aria-hidden src="assets/icon/select.png" />
+
+                                            <mat-autocomplete #billingLocationAutoComp="matAutocomplete">
+                                                <mat-option *ngFor="let indx=index; let bill of filteredBillingLocations | async" [value]="bill.full_address" (onSelectionChange)="getSelectedLocationB(bill, $event)">
+                                                <span>{{ bill.full_address }}</span>
+                                                </mat-option>
+
+                                                <mat-option (click)="showAddWorkLocationPopup(client_id.value,'billLocation')">
+                                                <img aria-hidden src="assets/icon/icon-add.png" />
+                                                <span>New Address</span>
+                                                </mat-option>
+
+                                            </mat-autocomplete>
+                                        </mat-form-field>
+                                        <div class="loaderField" *ngIf="isBillAddressRequestOnGoing"><i class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                                    </div>
+                                </div>
+                              
+                                <div class="error-msg" *ngIf="client_billing_location_id.invalid && (client_billing_location_id.dirty || client_billing_location_id.touched || submitted)">
+                                    <small *ngIf="client_billing_location_id.errors.required">Billing address from the list.</small>
+                                </div>
+
+                            </div>
+                        </div>
+                </div>
+               
+            </div>
+
+            <div class="col-sm-6">
+                
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-5 label-col" for="">Contact Name</label>
+                        <div  class="col-sm-7">
+                            <input autocomplete="off"  placeholder="" type="text" formControlName="client_contact_name" >
+                            <div class="error-msg" *ngIf="client_contact_name.invalid && (client_contact_name.dirty || client_contact_name.touched || submitted)">
+                                <small *ngIf="client_contact_name.errors.required">Contact Name is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-5 label-col" for="">Email</label>
+                        <div  class="col-sm-7">
+                            <input autocomplete="off"  placeholder="" type="text" formControlName="client_email" >
+                            <div class="error-msg" *ngIf="client_email.invalid && (client_email.dirty || client_email.touched || submitted)">
+                                <small *ngIf="client_email.errors.required">Email address is required.</small>
+                                <small *ngIf="client_email.errors.pattern">Enter valid email.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-5 label-col" for="">Phone Number</label>
+                        <div  class="col-sm-7">
+                            <input autocomplete="off"  placeholder="" type="text" formControlName="client_phone_no">
+                            <div class="error-msg" *ngIf="client_phone_no.invalid && (client_phone_no.dirty || client_phone_no.touched || submitted)">
+                                <small *ngIf="client_phone_no.errors.required">Phone number is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- /Client Info -->
+        
+        <!-- Upper Info -->
+        <div class="invoice-header-table">
+
+            <table class="table table-bordered" width="100%">
+
+                <thead>
+                    <tr>
+                        <th>Mid Section</th>
+                        <th>Customer PO#</th>
+                        <th>Payment Term</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" formControlName="invoice_midsection">
+                        </td>
+                        <td>
+                            <input type="text" formControlName="po_nos">
+                        </td>
+                        <td>
+
+                            <div class="input-group" (click)="picker.open()">
+
+                                <input autocomplete="nope" type="text"  formControlName="due_date" [matDatepicker]="picker" [min]="minDate" readonly="true" describedby="addon_due_date">
+
+                                <span class="input-group-addon" id="addon_due_date"><img class="date_icon" src="assets/icon/date_picker.png">
+                                </span>
+
+                            </div>
+                           
+                            <mat-datepicker #picker ></mat-datepicker>
+
+                            <div class="error-msg" *ngIf="invoiceForm.get('due_date').invalid && (invoiceForm.get('due_date').dirty || invoiceForm.get('due_date').touched || submitted || submittedPartialDate)">
+                                <small *ngIf="invoiceForm.get('due_date').errors.required">Date is required.</small>
+                                <small *ngIf="invoiceForm.get('due_date').errors.min">Please enter upcoming date.</small>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+        <!-- /Upper Info -->
+
+        <!-- Service & Material Section  -->
+
+        <div class="invoice-table-container">
+            
+            <div class="table-responsive">
+
+                <table class="table table-border" width="100%">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Services and Materials</th>
+                            <th width="20%">Cost ( {{ util.getCurrencySign() }} ) </th>
+                            <th width="20%">Invoice Quantity</th>
+                            <th width="20%">Invoice Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="hasDataOf('services')">
+                            
+                            <tr *ngFor="let service of invoiceForm.get('services').controls; let i = index;" 
+                            [formGroup]="service">
+                                <td width="1%">  <img src="assets/icon/close_icon.png" (click)="removeRow(1, i)" style="cursor: pointer;"> </td>
+                                <td> 
+                                   
+                                    <div>
+                                    {{ service.get('service_definition')?.value }}
+                                    </div>
+                                    <ng-container *ngIf="service.get('details')?.value">
+                                     <strong><small>Description : </small></strong>
+                                        {{ service.get('details')?.value }}
+                                    </ng-container>
+                                </td>
+
+                                <td>
+                                    <input autocomplete="off" type="text" 
+                                        name="cost{{i}}" 
+                                        formControlName="cost" 
+                                        (input)="calculateInvAmt(i)" />
+                                    
+                                    <div class="error-msg" *ngIf="service.get('cost').invalid && (service.get('cost').dirty || service.get('quantity').touched)">
+
+                                        <small *ngIf="service.get('cost').errors.required">Cost is required.</small>
+
+                                        <small *ngIf="service.get('cost').errors.min">Minimum {{ service.get('cost')?.getError('min')?.min }}.</small>
+
+                                        <small *ngIf="service.get('cost').errors.pattern">Invalid Cost.</small>
+                                    </div>
+
+                                </td>
+
+                                <td> 
+                                    <div>
+                                        <input autocomplete="off" type="text" 
+                                            name="quantity{{i}}" 
+                                            formControlName="quantity" 
+                                            (input)="calculateInvAmt(i)" />
+                                            
+                                        <div class="error-msg" *ngIf="service.get('quantity').invalid && (service.get('quantity').dirty || service.get('quantity').touched)">
+                                            <small *ngIf="service.get('quantity').errors.required">Quantity is required.</small>
+
+                                            <small *ngIf="service.get('quantity').errors.min">Minimum {{ service.get('quantity')?.getError('min')?.min }}.</small>
+
+                                            <small *ngIf="service.get('quantity').errors.pattern">Invalid Quantity.</small>
+
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {{service.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}
+                                </td>
+                            </tr>
+
+                        </ng-container>
+
+                        <ng-container *ngIf="hasDataOf('product_materials')">
+                            
+                            <tr *ngFor="let materialItem of invoiceForm.get('product_materials').controls; let i = index;" 
+                            [formGroup]="materialItem">
+                                <td width="1%">
+                                    <img src="assets/icon/close_icon.png" (click)="removeRow(2,i)" style="cursor: pointer;">
+                                </td>
+                                <td>
+                                    <div>{{ materialItem.get('item_definition_name')?.value }}</div>
+                                    <ng-container *ngIf="materialItem.get('details')?.value">
+                                        <strong><small>Description : </small></strong>
+                                        {{ materialItem.get('details')?.value }}
+                                    </ng-container>
+                                </td>
+
+                                <td>
+                                     
+                                    <input autocomplete="off" type="text"
+                                        name="m_cost{{i}}" 
+                                        formControlName="cost" 
+                                        (input)="calculateMaterialInvAmt(i)" />
+                                        
+
+                                    <div class="error-msg" *ngIf="materialItem.get('cost').invalid && (materialItem.get('cost').dirty || materialItem.get('cost').touched)">
+
+                                        <small *ngIf="materialItem.get('cost').errors.required">Cost is required.</small>
+
+                                        <small *ngIf="materialItem.get('cost').errors.pattern">Invalid Cost.</small>
+
+                                        <small *ngIf="materialItem.get('cost').errors.min">Minimum {{ materialItem.get('cost')?.getError('min')?.min }}.</small>
+
+                                    </div>
+
+                                </td>
+
+                                <td> 
+                                    <div class="input-group">
+                                     <input autocomplete="off" type="text"
+                                        name="m_quantity{{i}}" 
+                                        formControlName="quantity" 
+                                        (input)="calculateMaterialInvAmt(i)" />
+                                        <ng-container *ngIf="materialItem.get('uom')?.value">
+                                            {{ materialItem.get('uom')?.value }}
+                                        </ng-container>
+                                    </div>
+                                    
+                                    <div class="error-msg" *ngIf="materialItem.get('quantity').invalid && (materialItem.get('quantity').dirty || materialItem.get('quantity').touched)">
+
+                                        <small *ngIf="materialItem.get('quantity').errors.required">Quantity is required.</small>
+
+                                        <small *ngIf="materialItem.get('quantity').errors.min">Minimum {{ materialItem.get('quantity')?.getError('min')?.min }}.</small>
+
+                                        <small *ngIf="materialItem.get('quantity').errors.pattern">Invalid Quantity.</small>
+
+                                    </div>
+                                    
+                                </td>
+
+                                <td>
+                                    {{materialItem.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}
+                                </td>
+                            </tr>
+
+                        </ng-container>
+                        <ng-container *ngIf="hasDataOf('additional_items')">
+                            
+                            <tr *ngFor="let additional_item of invoiceForm.get('additional_items').controls; let indxP=index" [formGroup]="additional_item">
+                                <td width="1%">  <img src="assets/icon/close_icon.png" (click)="removeRow(3, indxP)" style="cursor: pointer;"></td>
+                                <td >
+                                   
+                                    <div class="form-group">
+
+                                        <div class="autoCompleteList">
+
+                                            <div class="searchList">
+
+                                                <mat-form-field class="product">
+
+                                                    <input #itemAutoCompleteInput  autocomplete="nope" id=additional_item_{{indxP}} matInput placeholder="" 
+                                                        formControlName="name" 
+                                                        [matAutocomplete]="servicesAutoComp" (keyup)="validateService($event, additional_item, indxP)">
+                                                        
+                                                     <i *ngIf="additional_item.get('name').value" (click)="removeSelectedItem(indxP, 'additional_item_');" class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+
+                                                    <mat-autocomplete #servicesAutoComp="matAutocomplete">
+                                                        <mat-option *ngFor="let optionIndx=index; let item of additional_item.get('dropdownList').value | async" [value]="item.name" (onSelectionChange)="getSelectedService(item, $event, indxP)">
+                                                            <span>{{ item.name }}</span>
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+
+                                                </mat-form-field>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="error-msg" *ngIf="(additional_item.get('name').invalid) && (additional_item.get('name').dirty || additional_item.get('name').touched || submitted)">
+                                            <small *ngIf="additional_item.get('name').errors.required">Please select item from the list.</small>
+                                        </div>
+
+                                        <ng-container *ngIf="additional_item.get('details')?.value">
+                                            <strong><small>Description : </small></strong>
+                                            {{ additional_item.get('details')?.value }}
+                                        </ng-container>
+                                    </div>
+
+                                </td>
+
+                                <td >
+                                    <div >
+                                    <input autocomplete="off"  type="text" name="additional_cost_{{indxP}}" formControlName="cost" (input)="calculateInvAdditionalAmt(indxP)"/>
+                                    <div class="error-msg" *ngIf="additional_item.get('cost').invalid && (additional_item.get('cost').dirty || additional_item.get('cost').touched || submitted)">
+                                        <small *ngIf="additional_item.get('cost').errors.required">Cost is required.</small>
+                                        <small *ngIf="additional_item.get('cost').errors.pattern">Invalid Cost.</small>
+                                    </div>
+                                    </div>
+                                </td>
+
+                                <td >
+                                    
+                                    <div class="input-group">
+                                        <input autocomplete="off" type="text" name="add_material_quantity_{{indxP}}" formControlName="quantity"  (input)="calculateInvAdditionalAmt(indxP)"/>
+
+                                        <ng-container *ngIf="additional_item.get('uom')?.value">
+                                            {{ additional_item.get('uom')?.value }}
+                                        </ng-container>
+                                    </div>
+
+                                    <div class="error-msg" *ngIf="additional_item.get('quantity').invalid && (additional_item.get('quantity').dirty || additional_item.get('quantity').touched || submitted )">
+                                        <small *ngIf="additional_item.get('quantity').errors.required">Quantity is required.</small>
+                                        <small *ngIf="additional_item.get('quantity').errors.pattern">Invalid Quantity.</small>
+                                    </div>
+
+                                </td>
+
+                                <td>{{additional_item.get('total_amount').value | currency: util.getCurrency() :'symbol-narrow'}}</td>
+                                
+                            </tr>
+
+                        </ng-container>
+       
+                        <tr>
+                            <td colspan="6">
+                                <div class="addIcon Mar0">
+
+                                    <label (click)="addNewMaterialRow()" style="cursor: pointer;">
+                                        <img src="assets/icon/icon-add.png"/>
+                                         Add Item
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>     
+        </div>
+        <!-- /Service & materila Section -->
+
+        <!-- Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+        <div class="payScheduleWrap">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="commentSection">
+                        <label>Notes</label>
+                        <div class="">
+                            <textarea  formControlName="notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="label-col">Subtotal</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col"> {{ invoiceForm.get('subtotal').value | currency: util.getCurrency() :'symbol-narrow' }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col text-right">Shipping and Handling</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col">
+                                <input autocomplete="nope" type="text" formControlName="shipping_and_handling"  (keyup)="calculateTotal()" />
+                                <div class="error-msg" *ngIf="invoiceForm.get('shipping_and_handling').invalid && (invoiceForm.get('shipping_and_handling').dirty || invoiceForm.get('shipping_and_handling').touched || submitted)">
+                                    <small *ngIf="invoiceForm.get('shipping_and_handling').errors.required">Shipping and Handling is required.</small>
+                                    <small *ngIf="invoiceForm.get('shipping_and_handling').errors.pattern">Invalid Amount (e.g 54, 78.25).</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col text-right">Adjustment</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col">
+                                <input autocomplete="nope" type="text" formControlName="adjustment"  (keyup)="calculateTotal()" />
+                                <div class="error-msg" *ngIf="invoiceForm.get('adjustment').invalid && (invoiceForm.get('adjustment').dirty || invoiceForm.get('adjustment').touched || submitted)">
+                                    <small *ngIf="invoiceForm.get('adjustment').errors.required">Adjustment is required.</small>
+                                    <small *ngIf="invoiceForm.get('adjustment').errors.pattern">Invalid Amount (e.g 54, 78.25).</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-col taxes text-right">
+                                <span>Tax @</span>
+                                <input autocomplete="nope" type="text" formControlName="taxes" class="taxInput" (keyup)="calculateTotal()" /> %
+                                <div class="error-msg" *ngIf="invoiceForm.get('taxes').invalid && (invoiceForm.get('taxes').dirty || invoiceForm.get('taxes').touched || submitted)">
+
+                                    <small *ngIf="invoiceForm.get('taxes').errors.required">Tax is required.</small>
+
+                                    <small *ngIf="invoiceForm.get('taxes').errors.min || invoiceForm.get('taxes').errors.max || invoiceForm.get('taxes').errors.pattern">Invalid Tax.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col tax-top-8">{{ invoiceForm.get('tax_amount').value | currency: util.getCurrency() :'symbol-narrow'}}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="label-col">Total Payment Amount </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-col font-bold">
+                                {{ 
+                                    invoiceForm.get('total_payment_amount').value 
+                                    | currency: util.getCurrency() :'symbol-narrow' 
+                                }}
+                                <div class="error-msg" *ngIf="invoiceForm.get('total_payment_amount').invalid && (invoiceForm.get('total_payment_amount').dirty || invoiceForm.get('total_payment_amount').touched || submitted)">
+                                      
+                                      <small *ngIf="invoiceForm.get('total_payment_amount').errors.min || invoiceForm.get('total_payment_amount').errors.max || tax.errors.pattern">The total payment amount not less than 0.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Subtotal (Shipping & Handdling) and Adgesment and Taxes Seaction -->
+
+        <div class="button-row">
+             <!-- routerLink="/account/csa/review-invoice" -->
+            <button type="button" mat-raised-button class="trea-btn" (click)="next(invoiceForm)">Next</button>
+            <button type="button" mat-raised-button class="trea-btn" (click)="cancel()">Cancel </button>
+        </div>
+    </form>
+    <!-- Form Close -->
+    <!-- NOTE: Implements for close dropdown on the fly -->
+    <input type="hidden" id="hiddenInput" placeholder="">
+</div>

@@ -1,0 +1,283 @@
+<div class="newpurchaseOrderWrap" id="edit-po">
+  <h1 class="pageTitle" *ngIf="!editMode">New Purchase Order</h1>
+  <h1 class="pageTitle" *ngIf="editMode">Purchase Order {{pageVariables.purchase_order_no}}</h1>
+
+
+  <form autocomplete="off" role="form" [formGroup]="addPurchaseOdrFm">
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="label-col">Supplier</div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group clearfix">
+              <div class="autoCompleteList">
+                <div class="searchList">
+                  <mat-form-field class="product">
+                    <input autocomplete="off" matInput placeholder="" [formControl]="supplier"
+                      [matAutocomplete]="supplierAutoComp" (keyup)="validateSupplier($event)" id="supplier_id"
+                      name="supplier{{autoNumber}}">
+                    <i *ngIf="supplier.value!=''"
+                      (click)="util.clearAutoComplete('supplier_id', [supplier, supplier_id]); clearDetails()"
+                      class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+                    <img *ngIf="supplier.value==''" class="selectBoxIcon" aria-hidden src="assets/icon/select.png" />
+                    <mat-autocomplete #supplierAutoComp="matAutocomplete">
+                      <mat-option *ngFor="let indx=index; let item of filteredSupplier | async"
+                        [value]="item.supplier_name" (onSelectionChange)="getSelectedSupplier(item, $event)">
+                        <span>{{ item.supplier_name }}</span>
+                      </mat-option>
+
+                      <mat-option (click)="showAddSupplierPopup()"
+                        canAccess="supplier_create"
+                      >
+                        <img aria-hidden src="assets/icon/icon-add.png" />
+                        <span>New Supplier</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+
+                  <div *ngIf="isSupplierLoad" class="loaderField"><i
+                      class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                </div>
+              </div>
+
+              <span class="error-msg"
+                *ngIf="supplier_id.invalid && (supplier_id.dirty || supplier_id.touched || submitted || submittedSup)">
+                <small *ngIf="supplier_id.errors.required">Please select Supplier from the list.</small>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6" *ngIf="pageData.supplier">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="label-col">Email</div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group clearfix">
+              {{pageData.supplier.email_id ? pageData.supplier.email_id : 'N/A' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="pageData.supplier">
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="label-col">Phone</div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group clearfix">
+              {{pageData.supplier.phone_no ? pageData.supplier.phone_no : 'N/A' }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="label-col">Address</div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group clearfix">
+              {{pageData.supplier.address1 ? util.concatenateStrings(pageData.supplier.address2,pageData.supplier.address1) : 'N/A' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3 class="detailsHeading">Order Details</h3>
+    <div class="purchaseitemDetails">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>
+                <!-- Leave empty for alignment -->
+              </th>
+
+              <th>Manufacturer</th>
+              <th style="padding-left: 2%;">Item Definition</th>
+              <th>Order Qty (Units)</th>
+              <th class="optional">Price/Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items.controls; let indxP=index" [formGroup]="item">
+              <td *ngIf="item.get('is_delete').value == '0'"><img (click)="removeItem(indxP, item)" *ngIf="indxP != 0"
+                  src="assets/icon/close_icon.png"></td>
+
+              <td *ngIf="item.get('is_delete').value == '0'">
+                <div class="form-group">
+                  <div class="autoCompleteList">
+                    <div class="searchList">
+                      <mat-form-field class="product">
+                        <input autocomplete="off" id=manf_name_{{indxP}} matInput placeholder=""
+                          [formControl]="item.get('manf_name')" [matAutocomplete]="manufacturerAutoComp"
+                          (keyup)="validateManf($event,item,indxP)">
+                        <i *ngIf="item.get('manf_name').value!=''"
+                          (click)="util.focusHiddenInput('hiddenInput');util.clearAutoComplete('manf_name_', [item.get('manf_name'), item.get('manf_id'), item.get('item_definition_name'), item.get('item_def_id'), item.get('filteredManufacturerPart')], indxP)"
+                          class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+                        <img *ngIf="item.get('manf_name').value==''" class="selectBoxIcon" aria-hidden
+                          src="assets/icon/select.png" />
+                        <mat-autocomplete #manufacturerAutoComp="matAutocomplete">
+                          <mat-option
+                            *ngFor="let indx=index; let mitem of item.get('filteredManufacturer').value | async | sortBy:'manf_name':'ASC':'A'"
+                            [value]="mitem.manf_name" (onSelectionChange)="getMfg(mitem,$event,indxP)">
+                            <span>{{ mitem.manf_name }}</span>
+                          </mat-option>
+
+                          <mat-option (click)="showAddManufacturerPopup(indxP)"
+                            canAccess="manufacturer_create"
+                          >
+                            <img aria-hidden src="assets/icon/icon-add.png" />
+                            <span>New Manufacturer</span>
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                      <div *ngIf="isManfLoad" class="loaderField"><i
+                          class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                    </div>
+                  </div>
+                  <span class="error-msg"
+                    *ngIf="item.get('manf_id').invalid && (item.get('manf_id').dirty || item.get('manf_id').touched || submitted || submittedPartial)">
+                    <small *ngIf="item.get('manf_id').errors.required">Please select Manufacture from the list.</small>
+                  </span>
+                </div>
+              </td>
+              <td *ngIf="item.get('is_delete').value == '0'">
+                <div class="form-group col-md-12">
+                  <div class="autoCompleteList">
+                    <div class="searchList">
+                      <mat-form-field class="product">
+                        <input autocomplete="off" id=item_definition_name_{{indxP}} matInput placeholder=""
+                          [formControl]="item.get('item_definition_name')" [matAutocomplete]="manufacturerPartAutoComp"
+                          (keyup)="validateManfPart($event,item,indxP)">
+                        <i *ngIf="item.get('manf_name').value!=''"
+                          (click)="util.focusHiddenInput('hiddenInput');util.clearAutoComplete('item_definition_name_', [item.get('item_definition_name'), item.get('item_def_id')], indxP);onClear(indxP);"
+                          class="clearAutoComplete fa fa-times-circle" aria-hidden="true"></i>
+                        <img *ngIf="item.get('item_definition_name').value==''" class="selectBoxIcon" aria-hidden
+                          src="assets/icon/select.png" />
+                        <mat-autocomplete #manufacturerPartAutoComp="matAutocomplete">
+                          <mat-option
+                            *ngFor="let indx=index; let mitem of item.get('filteredManufacturerPart').value | async | sortBy:'item_definition_name':'ASC':'A'"
+                            [value]="mitem.item_definition_name"
+                            (onSelectionChange)="getManfPart(mitem, $event, indxP)">
+                            <span>{{ mitem.item_definition_name }}</span>
+                          </mat-option>
+
+                          <mat-option *ngIf="item.get('manf_name').value!=''"
+                            (click)="showAddManufacturerPartPopup(indxP)" 
+                            canAccess="item_definition_create"
+                            >
+                            <img aria-hidden src="assets/icon/icon-add.png" />
+                            <span>New Item Definition</span>
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                      <div *ngIf="item.get('isSubLocationLoad').value" class="loaderField"><i
+                          class="fa fa-spinner fa-pulse fa-3x fa-fw action"></i></div>
+                    </div>
+                  </div>
+                  <span class="error-msg"
+                    *ngIf="item.get('item_def_id').invalid && (item.get('item_def_id').dirty || item.get('item_def_id').touched || submitted || submittedPartial)">
+                    <small *ngIf="item.get('item_def_id').errors.required">Please select Item Definition from the
+                      list.</small>
+                  </span>
+                </div>
+              </td>
+              <td *ngIf="item.get('is_delete').value == '0'">
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-sm-8 quantity-input">
+                      <input autocomplete="nope" type="number" formControlName="quantity_ordered"
+                        class="form-control PadR0" (keypress)="util.moneyCheck($event)">
+                    </div>
+                    <div class="col-sm-4 uom-symbol" *ngIf="item.get('item_definition_name').value!=''">
+                      &nbsp;{{item.get('uom').value}}</div>
+                  </div>
+                  <span class="error-msg row"
+                    *ngIf="item.get('quantity_ordered').invalid && (item.get('quantity_ordered').dirty || item.get('quantity_ordered').touched || submitted || submittedPartial)">
+                    <small *ngIf="item.get('quantity_ordered').errors.required">Quantity is required.</small>
+                    <small *ngIf="item.get('quantity_ordered').errors.pattern">Invalid Quantity.</small>
+                  </span>
+                </div>
+              </td>
+              <td *ngIf="item.get('is_delete').value == '0'">
+                <div class="form-group">
+                  <input autocomplete="nope" type="text" formControlName="price_per_unit" placeholder="(optional)"
+                    class="form-control">
+                  <span class="error-msg"
+                    *ngIf="item.get('price_per_unit').invalid && (item.get('price_per_unit').dirty || item.get('price_per_unit').touched || submitted || submittedPartial)">
+                    <!-- <small *ngIf="item.get('price_per_unit').errors.required">Price/Unit is required.</small> -->
+                    <small
+                      *ngIf="item.get('price_per_unit').errors.pattern && !item.get('price_per_unit').errors.maxlength">Invalid
+                      Price.</small>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <!-- Leave empty for alignment -->
+              </td>
+              <td colspan=5>
+                <span (click)="addPurchaseItem('0')" class="addMore">
+                  <img src="assets/icon/icon-16.png" class="img-responsive" alt="Add Items">
+                  <span>Add Item</span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row MT20">
+      <div class="form-group">
+        <div class="col-md-2">
+          <label class="label-col optional" for="comment">Comment</label>
+        </div>
+        <div class="col-md-6">
+          <textarea autocomplete="nope" class="form-control" formControlName="comment" placeholder="(optional)"
+            rows="6"></textarea>
+          <span class="error-msg" *ngIf="comment.invalid && (comment.dirty || comment.touched || submitted)">
+            <small *ngIf="comment.errors.maxlength">Comment must not be longer than
+              {{constant.DEFAULT_COMMENT_MAXLENGTH}} characters.</small>
+          </span>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+
+
+      <div class="errMsgCon" *ngIf="isError" style="margin-bottom: 20px;">
+        <small>{{errMsg}}</small>
+      </div>
+
+      <div class="button-row" *ngIf="!editMode">
+        <button type="button" mat-raised-button id="savePO" class="trea-btn"
+          (click)="createPurchaseOrder(addPurchaseOdrFm,'1')">Save</button>
+        <button type="button" mat-raised-button id="add-emp" (click)="reviewOrder(addPurchaseOdrFm)" class="trea-btn">Next</button>
+        <button type="button" mat-raised-button (click)="cancel('1')" class="trea-btn">Cancel</button>
+      </div>
+      <div class="button-row" *ngIf="editMode">
+        <span *ngIf="newData && newData.redirectFrom == 'listView'; else displaySaveBtn">
+          <button type="button" mat-raised-button id="saveExsisting" (click)="createPurchaseOrder(addPurchaseOdrFm,'2')"
+            class="trea-btn">Update</button>
+          <button type="button" mat-raised-button (click)="cancel('2')" class="trea-btn">Cancel</button>
+        </span>
+        <ng-template #displaySaveBtn>
+          <button  mat-raised-button id="savePO" type="button" class="trea-btn"
+            (click)="createPurchaseOrder(addPurchaseOdrFm,'1')">Save</button>
+          <button  type="button" mat-raised-button id="add-emp" (click)="reviewOrder(addPurchaseOdrFm)" class="trea-btn">Next</button>
+          <button type="button" mat-raised-button (click)="cancel('1')" class="trea-btn">Cancel</button>
+        </ng-template>
+      </div>
+    </div>
+  </form>
+  <!-- NOTE: Implements for close dropdown on the fly -->
+  <input type="hidden" id="hiddenInput" placeholder="">
+</div>

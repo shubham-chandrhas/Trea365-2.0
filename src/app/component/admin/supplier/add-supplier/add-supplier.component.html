@@ -1,0 +1,110 @@
+<div class="supplier-section" [ngClass]="currentPath == 'add-supplier' ? 'MB30' : ''">
+    <h3 class="pageTitle">New Supplier</h3>
+    <div class="addNewSupFormCov clearfix">
+        <div class="col-sm-12">
+            <form autocomplete="off" role="form" [formGroup]="addNewSupFrm" class="form-horizontal">
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor" for="supplierName">Name</label>
+                        <div class="col-sm-8">
+                            <input autocomplete="nope" type="text" id="supplierName" name="supplierName" placeholder="" formControlName="supplierName" class="form-control">
+                            <span class="error-msg" *ngIf="supplierName.invalid && (supplierName.dirty || supplierName.touched || submitted)">
+                                <small *ngIf="supplierName.errors.required"> Name is required.</small>
+                                <small *ngIf="supplierName.errors.minlength"> Name must be at least 2 characters long.</small>
+                                <small *ngIf="supplierName.errors.maxlength"> Name must not greater than {{constant.DEFAULT_TEXT_MAXLENGTH}} characters.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                        <div class="form-group clearfix">
+                            <label class="col-sm-4 control-label txtColor optional"  for="paymentTerms">Payment Terms</label>
+                            <div class="col-sm-8">
+                                <span class="days-label">{{constant.DAYS}}</span>
+                                <input autocomplete="nope" type="number" id="paymentTerms" name="paymentTerms" placeholder="" formControlName="paymentTerms" class="form-control days-input">
+                                <span class="error-msg" *ngIf="paymentTerms.invalid && (paymentTerms.dirty || paymentTerms.touched || submitted)">
+                                    <small *ngIf="paymentTerms.errors.min">Payment terms cannot be negative.</small>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor optional" for="address1">Address 1</label>
+                        <div class="col-sm-8">
+                            <input autocomplete="nope" type="text" id="address1" name="address1" placeholder="" class="form-control" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search formControlName="address1" (mouseover)="util.disableAutocomplete()">
+                            <span class="error-msg" *ngIf="address1.invalid && (address1.dirty || address1.touched || submitted)">
+                                <small *ngIf="address1.errors.minlength">Address 1 must be at least 2 characters long.</small>
+                                <small *ngIf="address1.errors.maxlength">Address 1 must be less than 120 characters.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor optional" for="address2">Address 2</label>
+                        <div class="col-sm-8">
+                            <input autocomplete="nope" type="text" id="address2" name="address2" placeholder="" formControlName="address2" class="form-control optional">
+                            <span class="error-msg" *ngIf="address2.invalid && (address2.dirty || address2.touched || submitted)">
+                                <small *ngIf="address2.errors.minlength">Address 2 must be at least 2 characters long.</small>
+                                <small *ngIf="address2.errors.maxlength">Address 2 must be less than 120 characters.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor optional" for="email">Email</label>
+                        <div class="col-sm-8">
+                            <input autocomplete="nope" type="text" id="email" name="email" placeholder="" formControlName="emailId" class="form-control">
+                            <span class="error-msg" *ngIf="emailId.invalid && (emailId.dirty || emailId.touched || submitted)">
+                                <small *ngIf="emailId.errors.pattern">Enter valid email.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group clearfix">
+                        <label class="col-sm-4 control-label txtColor optional" for="phoneNumber">Phone Number</label>
+                        <div class="col-sm-8">
+                            <input autocomplete="nope" type="text" [textMask]="{mask: constant.PHONE_NUMBER_MASK}" id="phoneNumber" name="phoneNumber" placeholder="" formControlName="phoneNumber" class="form-control " (keypress)="util.keyPress($event)">
+                            <span class="error-msg" *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched || submitted)">
+                                <small *ngIf="phoneNumber.errors.pattern">Enter Valid Phone Number.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label txtColor optional" for="comment">Comment</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control " placeholder="" rows="8" id="comment" name="comment" placeholder="" formControlName="comment" class="form-control "></textarea>
+                            <span class="error-msg" *ngIf="comment.invalid && (comment.dirty || comment.touched || submitted)">
+                                <small *ngIf="comment.errors.maxlength">must not greater than {{constant.DEFAULT_COMMENT_MAXLENGTH}} characters.</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="errMsgCon" *ngIf="isError">
+                    <small>{{errMsg}}</small>
+                </div>
+                <div class="clearfix">
+                    <div class="button-row text-center">
+                        <button mat-raised-button class="trea-btn" type="button" (click)="addsupplier(addNewSupFrm)" routerlink="">Next</button>
+                        <button mat-raised-button class="trea-btn" type="button" (click)="cancelSupplier()">Cancel</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+

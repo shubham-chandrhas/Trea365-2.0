@@ -1,0 +1,357 @@
+<div class="summarySection">
+  <h1 class="pageTitle">Good {{dayType}}, {{ util.getLoggedInUserName() }}!</h1>
+  <p class="page-summary">{{util.getFormatedDate(today)}}</p>
+  <div class="container" style="width: 100%">
+    <!--top-->
+    <div class="row">
+      <div class="col-md-6 col-pad-rt">
+        <h1 class="subheading">Message</h1>
+        <div class="row">
+          <div class="col-md-3 col-xs-4 message-div"><span>{{useHubData.unread_message}} </span> <br>Conversation</div>
+          <div class="col-md-3 col-xs-4 message-div"><span>{{useHubData.unread_notifications}} </span><br> Notification
+          </div>
+          <div class="col-md-3 col-xs-4 pad-tp-1">
+            <a href="javascript:void(0);" class="pagelink" [routerLink]="['/message/csa/messaging']">View
+              All</a><br>
+            <a href="javascript:void(0);" class="pagelink" (click)="openChatBox()">Message</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-pad-lt">
+        <h1 class="subheading">My Schedule for Today</h1>
+        <div class="schedule-time" *ngFor="let schedule of useHubData.schedules">
+          <span class="">{{schedule.start_time}}{{schedule.start_time_format}} -
+            {{schedule.end_time}}{{schedule.end_time_format}}</span><a href="javascript:void(0);"
+            class="pagelink">{{schedule.details}}</a>
+        </div>
+
+        <div class="view-all-btn">
+          <!-- <a href="javascript:void(0);"  class="without-underline">2+ More</a> --> <a href="javascript:void(0);"
+            [routerLink]="['/workflow/schedule/csa/schedule-timeline']">View All </a>
+          <!-- <a href="javascript:void(0);" >New</a> -->
+        </div>
+      </div>
+    </div>
+    <!--top-->
+    <form autocomplete="off" role="form" [formGroup]="userHub">
+      <!--====Inventory=====-->
+      <div class="treaAccord summaryAccord">
+        <div class="accordRow">
+          <input autocomplete="nope" [formControl]="isInventoryChecked" type="checkbox"
+            (change)="changed($event,userHub)">
+          <div class="info-col head">
+            <i></i>
+            Inventory
+          </div>
+          <div class="subItem">
+            <div class="workflowWrap">
+              <div class="panelBody">
+                <div class="clearfix"></div>
+                <!-- Data -->
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.understock_items && useHubData.understock_items.length > 0">
+                    <h3 class="item-title">Understocked Items</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let undstItem of useHubData.understock_items">
+                      <div class="midText"><a href="javascript:void(0);"
+                          [routerLink]="['/inventory/csa/tracker/', undstItem.item_def_id]">{{undstItem.item_definition_name}}</a>
+                      </div>
+                      <p class="detail">Current Quantity : {{undstItem.quantity}}</p>
+                      <p class="itemuser">Runout Date : {{undstItem.runout_date}}</p>
+                    </div>
+                    <!--end contentbox-->
+                    <!--contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/inventory/csa/tracker/0']">View All </a>
+                    </div>
+                    <!--end contentbox-->
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.overstock_items && useHubData.overstock_items.length > 0">
+                    <h3 class="item-title">Overstocked Items</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let ovrstItem of useHubData.overstock_items">
+                      <div class="midText"><a href="javascript:void(0);"
+                          [routerLink]="['/inventory/csa/tracker/', ovrstItem.item_def_id]">{{ovrstItem.item_definition_name}}</a>
+                      </div>
+                      <p class="detail">Current Quantity : {{ovrstItem.quantity}}</p>
+                      <p class="itemuser">Minimum Quantity : {{ovrstItem.minimum_stock}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <!-- <a href="javascript:void(0);"  class="without-underline">+6 More </a> -->
+                      <a href="javascript:void(0);" [routerLink]="['/inventory/csa/tracker/0']">View All </a>
+                    </div>
+                  </div>
+                  <div class="col-sm-4"  *ngIf="useHubData.new_items && useHubData.new_items.length > 0">
+                    <h3 class="item-title">New Items</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let newstItem of useHubData.new_items">
+                      <div class="midText">{{newstItem.item_definition_name}}</div>
+                      <!-- <p class="detail">Current Quantity : {{newstItem.quantity}}</p> -->
+                      <!-- <p class="itemuser">{{undstItem.item_definition_name}}</p> -->
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/admin/csa/manufacturer-part/0']">View All </a>
+
+                      <!-- <a href="javascript:void(0);"
+                        >New
+                        Item</a> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.pending_maintainance && useHubData.pending_maintainance.length > 0">
+                    <h3 class="item-title">Pending Maintenance Requests</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let pdMain of useHubData.pending_maintainance">
+                      <div class="midText"><a href="javascript:void(0);"
+                          [routerLink]="['/inventory/csa/maintenance-list/', pdMain.maintenance_request_id]">{{pdMain.asset_name}}</a>
+                      </div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(pdMain.created_at)}}</p>
+                      <p class="itemuser">Created By : {{pdMain.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+                    <!--contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/inventory/csa/maintenance-list/0']">View All </a>
+                    </div>
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.purchase_orders && useHubData.purchase_orders.length > 0">
+                    <h3 class="item-title">New Purchase Orders</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let po of useHubData.purchase_orders">
+                      <div class="midText">{{po.supplier_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(po.created_at)}}</p>
+                      <p class="itemuser">Created By : {{po.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/inventory/po/csa/purchase-order-list/0']">View All
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--====End Inventory====-->
+      <!--====Clients & Workflow=====-->
+      <div class="treaAccord summaryAccord">
+        <div class="accordRow">
+          <input autocomplete="nope" type="checkbox" [formControl]="isClientWorkflowChecked" type="checkbox"
+            (change)="changedClientWorkflow($event,userHub)">
+          <div class="info-col head">
+            <i></i>
+            Clients & Workflow
+          </div>
+          <div class="subItem">
+            <div class="workflowWrap">
+              <div class="panelBody">
+                <div class="clearfix"></div>
+                <!-- Data -->
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.new_clients && useHubData.new_clients.length > 0">
+                    <h3 class="item-title">New Clients</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let newclient of useHubData.new_clients">
+                      <div class="midText">{{newclient.client_name}}</div>
+                      <!-- <p class="detail">Detail, another detail</p>
+                        <p class="itemuser">User Name, 12:34pm</p> -->
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/crm/csa/client-list/0']">View All </a>
+                      <a href="javascript:void(0);" [routerLink]="['/crm/csa/add-client']" canAccess="client_create" >New
+                        Client</a>
+                    </div>
+                    <!--end contentbox-->
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.new_quotations && useHubData.new_quotations.length > 0">
+                    <h3 class="item-title">Latest Quotations</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let newquote of useHubData.new_quotations">
+                      <div class="midText">{{newquote.client_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(newquote.created_at)}}</p>
+                      <p class="itemuser">Created By : {{newquote.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <!-- <a href="javascript:void(0);"  class="without-underline">+6 More </a>  -->
+                      <a href="javascript:void(0);" [routerLink]="['/workflow/quote/csa/quotation-list/0']">View All
+                      </a>
+                      <a href="javascript:void(0);" [routerLink]="['/workflow/quote/csa/quotation/services']" canAccess="quotation_create">New
+                        Quotation</a>
+                    </div>
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.my_quotations && useHubData.my_quotations.length > 0">
+                    <h3 class="item-title">My Quotations</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let myquote of useHubData.my_quotations">
+                      <div class="midText">{{myquote.client_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(myquote.created_at)}}</p>
+                      <!-- <p class="itemuser">User Name, 12:34pm</p> -->
+                    </div>
+                    <!--end contentbox-->
+
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/workflow/quote/csa/quotation-list/0']">View All
+                      </a> <a href="javascript:void(0);" [routerLink]="['/workflow/quote/csa/quotation/services']" canAccess="quotation_create">New
+                        Quotation</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.new_work_orders && useHubData.new_work_orders.length > 0">
+                    <h3 class="item-title">New Work Orders</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let newwo of useHubData.new_work_orders">
+                      <div class="midText">{{newwo.client_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(newwo.created_at)}}</p>
+                      <p class="itemuser">Created By : {{newwo.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/workflow/wo/csa/work-order-list/0']">View All </a>
+
+                    </div>
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.pending_quotations && useHubData.pending_quotations.length > 0">
+                    <h3 class="item-title">Quotations Pending Approval</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let pdquote of useHubData.pending_quotations">
+                      <div class="midText">{{pdquote.client_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(pdquote.created_at)}}</p>
+                      <p class="itemuser">Created By : {{pdquote.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/workflow/quote/csa/quotation-list/0']">View All
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--====End Clients & Workflow====-->
+      <!--====Financial=====-->
+      <div class="treaAccord summaryAccord">
+        <div class="accordRow">
+          <input autocomplete="nope" type="checkbox" [formControl]="isFinancialChecked" type="checkbox"
+            (change)="changedFinancial($event,userHub)">
+          <div class="info-col head">
+            <i></i>
+            Financial
+          </div>
+          <div class="subItem">
+            <div class="workflowWrap">
+              <div class="panelBody">
+                <div class="clearfix"></div>
+                <!-- Data -->
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.new_invoices && useHubData.new_invoices.length > 0">
+                    <h3 class="item-title">New Invoices</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let newinv of useHubData.new_invoices">
+                      <div class="midText">{{newinv.client_name}}</div>
+                      <p class="detail">Date Created : {{util.getFormatedDate(newinv.created_at)}}</p>
+                      <p class="itemuser">Created By : {{newinv.created_by}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/account/csa/invoice-list/0']">View All </a>
+                    </div>
+                    <!--end contentbox-->
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.pending_payables && useHubData.pending_payables.length > 0">
+                    <h3 class="item-title">Pending Payables</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let pendPay of useHubData.pending_payables">
+                      <div class="midText">{{pendPay.supplier_name}}</div>
+                      <p class="detail">Due Date : {{util.getFormatedDate(pendPay.due_date)}}</p>
+                      <p class="itemuser">Amount Due :
+                        {{pendPay.amount_due | currency: util.getCurrency() :'symbol-narrow'}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <!-- <a href="javascript:void(0);"  class="without-underline">+6 More </a>  -->
+                      <a href="javascript:void(0);" [routerLink]="['/account/csa/acc-payables/0']">View All </a>
+                    </div>
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.overdue_payables && useHubData.overdue_payables.length > 0">
+                    <h3 class="item-title">Overdue Payables</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let ovrduePay of useHubData.overdue_payables">
+                      <div class="midText">{{ovrduePay.supplier_name}}</div>
+                      <p class="detail">Due Date : {{util.getFormatedDate(ovrduePay.due_date)}}</p>
+                      <p class="itemuser">Amount Due :
+                        {{ovrduePay.amount_due | currency: util.getCurrency() :'symbol-narrow'}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/account/csa/acc-payables/0']">View All </a>
+                      <!-- <a href="javascript:void(0);"
+                        >New
+                        Thing</a> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4" *ngIf="useHubData.pending_receivables && useHubData.pending_receivables.length > 0">
+                    <h3 class="item-title">Pending Receivables</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let pedRec of useHubData.pending_receivables">
+                      <div class="midText">{{pedRec.client_name}}</div>
+                      <p class="detail">Due Date : {{util.getFormatedDate(pedRec.due_date)}}</p>
+                      <p class="itemuser">Amount Due :
+                        {{pedRec.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/account/csa/acc-receivables/0']">View All </a>
+                    </div>
+                  </div>
+                  <div class="col-sm-4" *ngIf="useHubData.overdue_receivables && useHubData.overdue_receivables.length > 0">
+                    <h3 class="item-title">Overdue Receivables</h3>
+                    <!--contentbox-->
+                    <div class="contentBox" *ngFor="let ovrdueRec of useHubData.overdue_receivables">
+                      <div class="midText">{{ovrdueRec.client_name}}</div>
+                      <p class="detail">Due Date : {{util.getFormatedDate(ovrdueRec.due_date)}}</p>
+                      <p class="itemuser">Amount Due :
+                        {{ovrdueRec.total_amount | currency: util.getCurrency() :'symbol-narrow'}}</p>
+                    </div>
+                    <!--end contentbox-->
+
+                    <div class="view-all-btn">
+                      <a href="javascript:void(0);" [routerLink]="['/account/csa/acc-receivables/0']">View All </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--====End Financial====-->
+    </form>
+  </div>
+</div>
